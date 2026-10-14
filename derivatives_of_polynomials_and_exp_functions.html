@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.19">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Miraj Samarakkody">
+<meta name="dcterms.date" content="2026-10-14">
+
+<title>Lecture Notes: Derivatives of Polynomials and Exponential Functions – Calculus I</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-1bda23ef02b1613632e48409ff51ea9e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar docked nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Calculus I</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-ch-3-differentiation-rules" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Ch 3: Differentiation Rules</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-ch-3-differentiation-rules">    
+        <li>
+    <a class="dropdown-item" href="./derivatives_of_polynomials_and_exp_functions.html">
+ <span class="dropdown-text">3.1 Polynomials and Exponential Functions</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./product_and_quotient_rules.html">
+ <span class="dropdown-text">3.2 The Product and Quotient Rules</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./derivatives_of_polynomials_and_exp_functions.html">Chapter 3: Differentiation Rules</a></li><li class="breadcrumb-item"><a href="./derivatives_of_polynomials_and_exp_functions.html">3.1 Polynomials and Exponential Functions</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Home</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Chapter 3: Differentiation Rules</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./derivatives_of_polynomials_and_exp_functions.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">3.1 Polynomials and Exponential Functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./product_and_quotient_rules.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">3.2 The Product and Quotient Rules</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#why-we-need-rules" id="toc-why-we-need-rules" class="nav-link active" data-scroll-target="#why-we-need-rules">1. Why we need rules</a></li>
+  <li><a href="#constant-functions-and-the-power-rule" id="toc-constant-functions-and-the-power-rule" class="nav-link" data-scroll-target="#constant-functions-and-the-power-rule">2. Constant functions and the Power Rule</a>
+  <ul class="collapse">
+  <li><a href="#constant-functions" id="toc-constant-functions" class="nav-link" data-scroll-target="#constant-functions">Constant functions</a></li>
+  <li><a href="#powers-with-positive-integer-exponents" id="toc-powers-with-positive-integer-exponents" class="nav-link" data-scroll-target="#powers-with-positive-integer-exponents">Powers with positive integer exponents</a></li>
+  <li><a href="#the-general-power-rule" id="toc-the-general-power-rule" class="nav-link" data-scroll-target="#the-general-power-rule">The general Power Rule</a></li>
+  </ul></li>
+  <li><a href="#new-derivatives-from-old" id="toc-new-derivatives-from-old" class="nav-link" data-scroll-target="#new-derivatives-from-old">3. New derivatives from old</a></li>
+  <li><a href="#exponential-functions" id="toc-exponential-functions" class="nav-link" data-scroll-target="#exponential-functions">4. Exponential functions</a></li>
+  <li><a href="#a-numerical-sanity-check" id="toc-a-numerical-sanity-check" class="nav-link" data-scroll-target="#a-numerical-sanity-check">5. A numerical sanity check</a></li>
+  <li><a href="#practice-problems" id="toc-practice-problems" class="nav-link" data-scroll-target="#practice-problems">6. Practice problems</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="derivatives_of_polynomials_and_exp_functions.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./derivatives_of_polynomials_and_exp_functions.html">Chapter 3: Differentiation Rules</a></li><li class="breadcrumb-item"><a href="./derivatives_of_polynomials_and_exp_functions.html">3.1 Polynomials and Exponential Functions</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Lecture Notes: Derivatives of Polynomials and Exponential Functions</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Miraj Samarakkody </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">October 14, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><em>Stewart, <strong>Calculus</strong>, 9th ed., §3.1</em></p>
+<p><strong>Learning objectives.</strong> By the end of this lecture you should be able to: 1. Differentiate constants, powers <span class="math inline">\(x^n\)</span>, and polynomials without using the limit definition. 2. Use the Constant Multiple, Sum, and Difference Rules. 3. Explain why <span class="math inline">\(\dfrac{d}{dx}(b^x) = f'(0)\,b^x\)</span>, and why the number <span class="math inline">\(e\)</span> makes <span class="math inline">\(\dfrac{d}{dx}(e^x) = e^x\)</span>. 4. Find tangent lines, normal lines, and horizontal tangents. 5. Check every answer symbolically with <strong>SymPy</strong> and numerically with <strong>NumPy</strong>.</p>
+<div id="cell-02" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-14T14:48:35.432699Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-14T14:48:35.432608Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-14T14:48:39.113366Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-14T14:48:39.112846Z&quot;}}" data-execution_count="1">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sympy <span class="im">as</span> sp</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Math, display</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>sp.init_printing()</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>x, t, h, n <span class="op">=</span> sp.symbols(<span class="st">"x t h n"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="why-we-need-rules" class="level2">
+<h2 class="anchored" data-anchor-id="why-we-need-rules">1. Why we need rules</h2>
+<p>By definition, <span class="math display">\[f'(x) = \lim_{h\to 0}\frac{f(x+h) - f(x)}{h}.\]</span></p>
+<p>Computing this limit every time is slow. In this lecture we use the definition <strong>once</strong> for each basic type of function. The results become rules we can apply right away.</p>
+<p>The helper below compares a derivative found by hand with SymPy’s answer and displays the result.</p>
+<div id="cell-04" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-14T14:48:39.114858Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-14T14:48:39.114769Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-14T14:48:39.116711Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-14T14:48:39.116302Z&quot;}}" data-execution_count="2">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> check(f, by_hand, var<span class="op">=</span>x):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Display d/dvar f = by_hand and confirm it agrees with SymPy."""</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    ok <span class="op">=</span> sp.simplify(sp.diff(f, var) <span class="op">-</span> by_hand) <span class="op">==</span> <span class="dv">0</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    display(Math(<span class="vs">rf"</span><span class="ch">\f</span><span class="vs">rac</span><span class="ch">{{</span><span class="vs">d</span><span class="ch">}}{{</span><span class="vs">d</span><span class="sc">{</span>sp<span class="sc">.</span>latex(var)<span class="sc">}</span><span class="ch">}}</span><span class="er">\</span><span class="vs">left</span><span class="kw">(</span><span class="sc">{</span>sp<span class="sc">.</span>latex(f)<span class="sc">}</span><span class="ch">\r</span><span class="vs">ight</span><span class="kw">)</span><span class="vs"> = </span><span class="sc">{</span>sp<span class="sc">.</span>latex(by_hand)<span class="sc">}</span><span class="vs">"</span>))</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Agrees with SymPy:"</span>, ok)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> diff_from_definition(f, var<span class="op">=</span>x):</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute f'(var) as the limit of the difference quotient."""</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> sp.limit((f.subs(var, var <span class="op">+</span> h) <span class="op">-</span> f) <span class="op">/</span> h, h, <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="constant-functions-and-the-power-rule" class="level2">
+<h2 class="anchored" data-anchor-id="constant-functions-and-the-power-rule">2. Constant functions and the Power Rule</h2>
+<section id="constant-functions" class="level3">
+<h3 class="anchored" data-anchor-id="constant-functions">Constant functions</h3>
+<p>The graph of <span class="math inline">\(f(x) = c\)</span> is a horizontal line, so its slope is <span class="math inline">\(0\)</span> everywhere: <span class="math display">\[\boxed{\frac{d}{dx}(c) = 0}\]</span> From the definition: <span class="math inline">\(\dfrac{c - c}{h} = 0\)</span> for every <span class="math inline">\(h \neq 0\)</span>, so the limit is <span class="math inline">\(0\)</span>.</p>
+</section>
+<section id="powers-with-positive-integer-exponents" class="level3">
+<h3 class="anchored" data-anchor-id="powers-with-positive-integer-exponents">Powers with positive integer exponents</h3>
+<p>Look at the first few cases, using the limit definition:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th><span class="math inline">\(f(x)\)</span></th>
+<th><span class="math inline">\(x\)</span></th>
+<th><span class="math inline">\(x^2\)</span></th>
+<th><span class="math inline">\(x^3\)</span></th>
+<th><span class="math inline">\(x^4\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(f'(x)\)</span></td>
+<td><span class="math inline">\(1\)</span></td>
+<td><span class="math inline">\(2x\)</span></td>
+<td><span class="math inline">\(3x^2\)</span></td>
+<td><span class="math inline">\(4x^3\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>The pattern is clear:</p>
+<p><strong>The Power Rule.</strong> If <span class="math inline">\(n\)</span> is a positive integer, then <span class="math display">\[\boxed{\frac{d}{dx}(x^n) = n\,x^{n-1}}\]</span></p>
+<p><strong>Proof.</strong> Use the binomial theorem to expand <span class="math inline">\((x+h)^n\)</span>: <span class="math display">\[\frac{(x+h)^n - x^n}{h} = \frac{\left[x^n + n x^{n-1}h + \binom{n}{2}x^{n-2}h^2 + \cdots + h^n\right] - x^n}{h}
+= n x^{n-1} + \binom{n}{2}x^{n-2}h + \cdots + h^{n-1}.\]</span> Every term after the first contains a factor of <span class="math inline">\(h\)</span>, so it goes to <span class="math inline">\(0\)</span> as <span class="math inline">\(h\to 0\)</span>. That leaves <span class="math inline">\(n x^{n-1}\)</span>. <span class="math inline">\(\blacksquare\)</span></p>
+<p>The table above, computed from the definition:</p>
+<div id="cell-06" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-14T14:48:39.117690Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-14T14:48:39.117633Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-14T14:48:39.185328Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-14T14:48:39.185004Z&quot;}}" data-execution_count="3">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">6</span>):</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    display(Math(<span class="vs">rf"</span><span class="ch">\f</span><span class="vs">rac</span><span class="ch">{{</span><span class="vs">d</span><span class="ch">}}{{</span><span class="vs">dx</span><span class="ch">}}</span><span class="er">\</span><span class="vs">left</span><span class="kw">(</span><span class="vs">x</span><span class="dv">^</span><span class="sc">{</span>k<span class="sc">}</span><span class="ch">\r</span><span class="vs">ight</span><span class="kw">)</span><span class="vs"> = </span><span class="sc">{</span>sp<span class="sc">.</span>latex(diff_from_definition(x<span class="op">**</span>k))<span class="sc">}</span><span class="vs">"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle \frac{d}{dx}\left(x^1\right) = 1\)</span></p>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle \frac{d}{dx}\left(x^2\right) = 2 x\)</span></p>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle \frac{d}{dx}\left(x^3\right) = 3 x^{2}\)</span></p>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle \frac{d}{dx}\left(x^4\right) = 4 x^{3}\)</span></p>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle \frac{d}{dx}\left(x^5\right) = 5 x^{4}\)</span></p>
+</div>
+</div>
+</section>
+<section id="the-general-power-rule" class="level3">
+<h3 class="anchored" data-anchor-id="the-general-power-rule">The general Power Rule</h3>
+<p>The rule holds for <strong>every real number</strong> <span class="math inline">\(n\)</span>: <span class="math display">\[\boxed{\frac{d}{dx}(x^n) = n\,x^{n-1}, \qquad n \in \mathbb{R}}\]</span> (Stewart proves the general case later with logarithmic differentiation, in §3.6.)</p>
+<p><strong>Example 1.</strong> - (a) <span class="math inline">\(\dfrac{d}{dx}\left(\dfrac{1}{x^2}\right) = \dfrac{d}{dx}\left(x^{-2}\right) = -2x^{-3} = -\dfrac{2}{x^3}\)</span> - (b) <span class="math inline">\(\dfrac{d}{dx}\left(\sqrt[3]{x^2}\right) = \dfrac{d}{dx}\left(x^{2/3}\right) = \tfrac{2}{3}x^{-1/3}\)</span> - (c) <span class="math inline">\(\dfrac{d}{dx}\left(x^{\pi}\right) = \pi x^{\pi - 1}\)</span></p>
+<p><strong>Tip:</strong> before you differentiate, rewrite roots and reciprocals as powers.</p>
+<div id="cell-08" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-14T14:48:39.186476Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-14T14:48:39.186419Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-14T14:48:39.233952Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-14T14:48:39.233646Z&quot;}}" data-execution_count="4">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>check(<span class="dv">1</span> <span class="op">/</span> x<span class="op">**</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">2</span> <span class="op">/</span> x<span class="op">**</span><span class="dv">3</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>check(x<span class="op">**</span>sp.Rational(<span class="dv">2</span>, <span class="dv">3</span>), sp.Rational(<span class="dv">2</span>, <span class="dv">3</span>) <span class="op">*</span> x<span class="op">**</span>sp.Rational(<span class="op">-</span><span class="dv">1</span>, <span class="dv">3</span>))</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>check(x<span class="op">**</span>sp.pi, sp.pi <span class="op">*</span> x<span class="op">**</span>(sp.pi <span class="op">-</span> <span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle \frac{d}{dx}\left(\frac{1}{x^{2}}\right) = - \frac{2}{x^{3}}\)</span></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Agrees with SymPy: True</code></pre>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle \frac{d}{dx}\left(x^{\frac{2}{3}}\right) = \frac{2}{3 \sqrt[3]{x}}\)</span></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Agrees with SymPy: True</code></pre>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle \frac{d}{dx}\left(x^{\pi}\right) = \pi x^{-1 + \pi}\)</span></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Agrees with SymPy: True</code></pre>
+</div>
+</div>
+<p><strong>Example 2 (tangent and normal lines).</strong> Find the tangent line and the normal line to <span class="math inline">\(y = x\sqrt{x}\)</span> at the point <span class="math inline">\((1, 1)\)</span>.</p>
+<p><em>By hand.</em> <span class="math inline">\(y = x^{3/2}\)</span>, so <span class="math inline">\(y' = \tfrac{3}{2}x^{1/2}\)</span>. At <span class="math inline">\(x = 1\)</span> the slope is <span class="math inline">\(m = \tfrac32\)</span>. - Tangent: <span class="math inline">\(y - 1 = \tfrac32(x - 1)\)</span>, so <span class="math inline">\(y = \tfrac32 x - \tfrac12\)</span>. - The normal line is perpendicular to the tangent, so its slope is <span class="math inline">\(-1/m = -\tfrac23\)</span>. Normal: <span class="math inline">\(y - 1 = -\tfrac23(x-1)\)</span>, so <span class="math inline">\(y = -\tfrac23 x + \tfrac53\)</span>.</p>
+<div id="cell-10" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-14T14:48:39.235008Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-14T14:48:39.234956Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-14T14:48:39.610860Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-14T14:48:39.610478Z&quot;}}" data-execution_count="5">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> x <span class="op">*</span> sp.sqrt(x)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> sp.diff(y, x).subs(x, <span class="dv">1</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>tangent <span class="op">=</span> sp.expand(<span class="dv">1</span> <span class="op">+</span> m <span class="op">*</span> (x <span class="op">-</span> <span class="dv">1</span>))</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>normal <span class="op">=</span> sp.expand(<span class="dv">1</span> <span class="op">-</span> (x <span class="op">-</span> <span class="dv">1</span>) <span class="op">/</span> m)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>display(Math(<span class="vs">rf"</span><span class="ch">\t</span><span class="vs">ext</span><span class="ch">{{</span><span class="vs">tangent: </span><span class="ch">}}</span><span class="vs"> y = </span><span class="sc">{</span>sp<span class="sc">.</span>latex(tangent)<span class="sc">}</span><span class="vs">, </span><span class="er">\</span><span class="vs">qquad </span><span class="ch">\t</span><span class="vs">ext</span><span class="ch">{{</span><span class="vs">normal: </span><span class="ch">}}</span><span class="vs"> y = </span><span class="sc">{</span>sp<span class="sc">.</span>latex(normal)<span class="sc">}</span><span class="vs">"</span>))</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>xs <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="fl">2.5</span>, <span class="dv">300</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">5</span>))</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>ax.plot(xs, xs<span class="op">**</span><span class="fl">1.5</span>, <span class="st">"k"</span>, lw<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="vs">r"</span><span class="dv">$</span><span class="vs">y = x</span><span class="dv">\s</span><span class="vs">qrt{x}</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>ax.plot(xs, <span class="fl">1.5</span> <span class="op">*</span> xs <span class="op">-</span> <span class="fl">0.5</span>, lw<span class="op">=</span><span class="fl">1.5</span>, label<span class="op">=</span><span class="st">"tangent"</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>ax.plot(xs, <span class="op">-</span><span class="dv">2</span> <span class="op">/</span> <span class="dv">3</span> <span class="op">*</span> xs <span class="op">+</span> <span class="dv">5</span> <span class="op">/</span> <span class="dv">3</span>, lw<span class="op">=</span><span class="fl">1.5</span>, label<span class="op">=</span><span class="st">"normal"</span>)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>ax.plot(<span class="dv">1</span>, <span class="dv">1</span>, <span class="st">"ko"</span>)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>ax.set_aspect(<span class="st">"equal"</span>)</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(<span class="op">-</span><span class="fl">0.5</span>, <span class="dv">3</span>)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="vs">r"Tangent and normal lines at </span><span class="dv">$</span><span class="kw">(</span><span class="vs">1,1</span><span class="kw">)</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle \text{tangent: } y = \frac{3 x}{2} - \frac{1}{2}, \qquad \text{normal: } y = \frac{5}{3} - \frac{2 x}{3}\)</span></p>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="derivatives_of_polynomials_and_exp_functions_files/figure-html/cell-6-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="new-derivatives-from-old" class="level2">
+<h2 class="anchored" data-anchor-id="new-derivatives-from-old">3. New derivatives from old</h2>
+<p>Suppose <span class="math inline">\(c\)</span> is a constant and <span class="math inline">\(f\)</span> and <span class="math inline">\(g\)</span> are differentiable.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Rule</th>
+<th>Formula</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Constant Multiple</td>
+<td><span class="math inline">\(\dfrac{d}{dx}\big[c\,f(x)\big] = c\,\dfrac{d}{dx}f(x)\)</span></td>
+</tr>
+<tr class="even">
+<td>Sum</td>
+<td><span class="math inline">\(\dfrac{d}{dx}\big[f(x) + g(x)\big] = \dfrac{d}{dx}f(x) + \dfrac{d}{dx}g(x)\)</span></td>
+</tr>
+<tr class="odd">
+<td>Difference</td>
+<td><span class="math inline">\(\dfrac{d}{dx}\big[f(x) - g(x)\big] = \dfrac{d}{dx}f(x) - \dfrac{d}{dx}g(x)\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Proof of the Sum Rule.</strong> Let <span class="math inline">\(F = f + g\)</span>. Then <span class="math display">\[F'(x) = \lim_{h\to0}\frac{[f(x+h)+g(x+h)] - [f(x)+g(x)]}{h}
+= \lim_{h\to0}\frac{f(x+h)-f(x)}{h} + \lim_{h\to0}\frac{g(x+h)-g(x)}{h} = f'(x) + g'(x).\]</span> The limit of a sum is the sum of the limits, and both limits exist because <span class="math inline">\(f\)</span> and <span class="math inline">\(g\)</span> are differentiable. <span class="math inline">\(\blacksquare\)</span></p>
+<p>The Sum Rule extends to any finite number of terms. Together with the Power Rule, this means <strong>we can differentiate any polynomial term by term.</strong></p>
+<p><strong>Example 3.</strong> <span class="math display">\[\frac{d}{dx}\left(x^8 + 12x^5 - 4x^4 + 10x^3 - 6x + 5\right) = 8x^7 + 60x^4 - 16x^3 + 30x^2 - 6.\]</span></p>
+<div id="cell-12" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-14T14:48:39.612270Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-14T14:48:39.612193Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-14T14:48:39.618184Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-14T14:48:39.617837Z&quot;}}" data-execution_count="6">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> x<span class="op">**</span><span class="dv">8</span> <span class="op">+</span> <span class="dv">12</span><span class="op">*</span>x<span class="op">**</span><span class="dv">5</span> <span class="op">-</span> <span class="dv">4</span><span class="op">*</span>x<span class="op">**</span><span class="dv">4</span> <span class="op">+</span> <span class="dv">10</span><span class="op">*</span>x<span class="op">**</span><span class="dv">3</span> <span class="op">-</span> <span class="dv">6</span><span class="op">*</span>x <span class="op">+</span> <span class="dv">5</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>check(p, <span class="dv">8</span><span class="op">*</span>x<span class="op">**</span><span class="dv">7</span> <span class="op">+</span> <span class="dv">60</span><span class="op">*</span>x<span class="op">**</span><span class="dv">4</span> <span class="op">-</span> <span class="dv">16</span><span class="op">*</span>x<span class="op">**</span><span class="dv">3</span> <span class="op">+</span> <span class="dv">30</span><span class="op">*</span>x<span class="op">**</span><span class="dv">2</span> <span class="op">-</span> <span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle \frac{d}{dx}\left(x^{8} + 12 x^{5} - 4 x^{4} + 10 x^{3} - 6 x + 5\right) = 8 x^{7} + 60 x^{4} - 16 x^{3} + 30 x^{2} - 6\)</span></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Agrees with SymPy: True</code></pre>
+</div>
+</div>
+<p><strong>Example 4 (horizontal tangents).</strong> Find the points on <span class="math inline">\(y = x^4 - 6x^2 + 4\)</span> where the tangent line is horizontal.</p>
+<p><em>By hand.</em> A horizontal tangent has slope <span class="math inline">\(0\)</span>: <span class="math display">\[y' = 4x^3 - 12x = 4x(x^2 - 3) = 0 \quad\Longrightarrow\quad x = 0,\ \pm\sqrt3.\]</span> The points are <span class="math inline">\((0, 4)\)</span>, <span class="math inline">\((\sqrt3, -5)\)</span>, and <span class="math inline">\((-\sqrt3, -5)\)</span>.</p>
+<div id="cell-14" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-14T14:48:39.619492Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-14T14:48:39.619420Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-14T14:48:40.997677Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-14T14:48:40.997297Z&quot;}}" data-execution_count="7">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> x<span class="op">**</span><span class="dv">4</span> <span class="op">-</span> <span class="dv">6</span><span class="op">*</span>x<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> <span class="dv">4</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>crit <span class="op">=</span> sp.solve(sp.diff(y, x), x)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>pts <span class="op">=</span> [(c, y.subs(x, c)) <span class="cf">for</span> c <span class="kw">in</span> crit]</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>display(Math(<span class="vs">r"</span><span class="ch">\t</span><span class="vs">ext{Horizontal tangents at } "</span> <span class="op">+</span> <span class="st">", "</span>.join(sp.latex(pt) <span class="cf">for</span> pt <span class="kw">in</span> pts)))</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>xs <span class="op">=</span> np.linspace(<span class="op">-</span><span class="fl">2.6</span>, <span class="fl">2.6</span>, <span class="dv">400</span>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> sp.lambdify(x, y, <span class="st">"numpy"</span>)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">5</span>))</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>ax.plot(xs, f(xs), <span class="st">"k"</span>, lw<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="vs">r"</span><span class="dv">$</span><span class="vs">y = x</span><span class="dv">^</span><span class="vs">4 - 6x</span><span class="dv">^</span><span class="vs">2 </span><span class="op">+</span><span class="vs"> 4</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> cx, cy <span class="kw">in</span> pts:</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    cx, cy <span class="op">=</span> <span class="bu">float</span>(cx), <span class="bu">float</span>(cy)</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    ax.plot([cx <span class="op">-</span> <span class="fl">0.6</span>, cx <span class="op">+</span> <span class="fl">0.6</span>], [cy, cy], lw<span class="op">=</span><span class="fl">1.5</span>)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    ax.plot(cx, cy, <span class="st">"ko"</span>)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(<span class="op">-</span><span class="dv">7</span>, <span class="dv">8</span>)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Horizontal tangent lines"</span>)</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle \text{Horizontal tangents at } \left( 0, \  4\right), \left( - \sqrt{3}, \  -5\right), \left( \sqrt{3}, \  -5\right)\)</span></p>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="derivatives_of_polynomials_and_exp_functions_files/figure-html/cell-8-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="exponential-functions" class="level2">
+<h2 class="anchored" data-anchor-id="exponential-functions">4. Exponential functions</h2>
+<p>Let <span class="math inline">\(f(x) = b^x\)</span> with <span class="math inline">\(b &gt; 0\)</span>. The definition gives <span class="math display">\[f'(x) = \lim_{h\to0}\frac{b^{x+h} - b^x}{h} = \lim_{h\to0}\frac{b^x\,b^h - b^x}{h} = b^x \lim_{h\to0}\frac{b^h - 1}{h}.\]</span> The remaining limit does not depend on <span class="math inline">\(x\)</span>. It is exactly <span class="math inline">\(f'(0)\)</span>, the slope of <span class="math inline">\(y = b^x\)</span> at <span class="math inline">\(x = 0\)</span>. So <span class="math display">\[\boxed{\frac{d}{dx}\left(b^x\right) = f'(0)\,b^x, \qquad f'(0) = \lim_{h\to0}\frac{b^h-1}{h}}\]</span></p>
+<p><strong>An exponential function’s rate of change is proportional to the function itself.</strong> We still need the constant <span class="math inline">\(f'(0)\)</span>. Let’s estimate it numerically for <span class="math inline">\(b = 2\)</span> and <span class="math inline">\(b = 3\)</span>:</p>
+<div id="cell-16" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-14T14:48:40.998950Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-14T14:48:40.998862Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-14T14:48:41.000767Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-14T14:48:41.000386Z&quot;}}" data-execution_count="8">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>hs <span class="op">=</span> np.array([<span class="fl">0.1</span>, <span class="fl">0.01</span>, <span class="fl">0.001</span>, <span class="fl">0.0001</span>])</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="st">'h'</span><span class="sc">:&gt;8}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'(2^h-1)/h'</span><span class="sc">:&gt;12}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'(3^h-1)/h'</span><span class="sc">:&gt;12}</span><span class="ss">"</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> hv <span class="kw">in</span> hs:</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>hv<span class="sc">:&gt;8}</span><span class="ss"> </span><span class="sc">{</span>(<span class="dv">2</span><span class="op">**</span>hv <span class="op">-</span> <span class="dv">1</span>) <span class="op">/</span> hv<span class="sc">:&gt;12.6f}</span><span class="ss"> </span><span class="sc">{</span>(<span class="dv">3</span><span class="op">**</span>hv <span class="op">-</span> <span class="dv">1</span>) <span class="op">/</span> hv<span class="sc">:&gt;12.6f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>       h    (2^h-1)/h    (3^h-1)/h
+     0.1     0.717735     1.161232
+    0.01     0.695555     1.104669
+   0.001     0.693387     1.099216
+  0.0001     0.693171     1.098673</code></pre>
+</div>
+</div>
+<p>So <span class="math inline">\(f'(0) \approx 0.69\)</span> when <span class="math inline">\(b = 2\)</span>, and <span class="math inline">\(f'(0) \approx 1.10\)</span> when <span class="math inline">\(b = 3\)</span>. Somewhere between <span class="math inline">\(2\)</span> and <span class="math inline">\(3\)</span> there is a base for which <span class="math inline">\(f'(0) = 1\)</span> exactly.</p>
+<p><strong>Definition of <span class="math inline">\(e\)</span>.</strong> <span class="math inline">\(e\)</span> is the number such that <span class="math display">\[\boxed{\lim_{h\to0}\frac{e^h - 1}{h} = 1}\]</span> Geometrically, <span class="math inline">\(y = e^x\)</span> is the only exponential function whose tangent line at <span class="math inline">\((0,1)\)</span> has slope exactly <span class="math inline">\(1\)</span>. Its value is <span class="math inline">\(e \approx 2.71828\)</span>.</p>
+<p><strong>Derivative of the natural exponential function.</strong> <span class="math display">\[\boxed{\frac{d}{dx}\left(e^x\right) = e^x}\]</span> <span class="math inline">\(e^x\)</span> is its own derivative: at every point, the slope of the graph equals the height of the graph.</p>
+<p>(In §3.6 we’ll see that <span class="math inline">\(f'(0) = \ln b\)</span>, so <span class="math inline">\(\dfrac{d}{dx}(b^x) = b^x \ln b\)</span>. Check: <span class="math inline">\(\ln 2 \approx 0.693\)</span> and <span class="math inline">\(\ln 3 \approx 1.099\)</span>.)</p>
+<div id="cell-18" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-14T14:48:41.001635Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-14T14:48:41.001580Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-14T14:48:41.025425Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-14T14:48:41.025039Z&quot;}}" data-execution_count="9">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> b <span class="kw">in</span> [<span class="dv">2</span>, <span class="dv">3</span>, sp.E]:</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    lim <span class="op">=</span> sp.limit((b<span class="op">**</span>h <span class="op">-</span> <span class="dv">1</span>) <span class="op">/</span> h, h, <span class="dv">0</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    display(Math(<span class="vs">rf"b = </span><span class="sc">{</span>sp<span class="sc">.</span>latex(b)<span class="sc">}</span><span class="vs">: </span><span class="er">\</span><span class="vs">quad </span><span class="er">\</span><span class="vs">lim_</span><span class="ch">{{</span><span class="vs">h</span><span class="ch">\t</span><span class="vs">o0</span><span class="ch">}}\f</span><span class="vs">rac</span><span class="ch">{{</span><span class="vs">b</span><span class="dv">^</span><span class="vs">h - 1</span><span class="ch">}}{{</span><span class="vs">h</span><span class="ch">}}</span><span class="vs"> = </span><span class="sc">{</span>sp<span class="sc">.</span>latex(lim)<span class="sc">}</span><span class="vs"> </span><span class="ch">\a</span><span class="vs">pprox </span><span class="sc">{</span><span class="bu">float</span>(lim)<span class="sc">:.5f}</span><span class="vs">"</span>))</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>check(sp.exp(x), sp.exp(x))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle b = 2: \quad \lim_{h\to0}\frac{b^h - 1}{h} = \log{\left(2 \right)} \approx 0.69315\)</span></p>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle b = 3: \quad \lim_{h\to0}\frac{b^h - 1}{h} = \log{\left(3 \right)} \approx 1.09861\)</span></p>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle b = e: \quad \lim_{h\to0}\frac{b^h - 1}{h} = 1 \approx 1.00000\)</span></p>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle \frac{d}{dx}\left(e^{x}\right) = e^{x}\)</span></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Agrees with SymPy: True</code></pre>
+</div>
+</div>
+<div id="cell-19" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-14T14:48:41.026349Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-14T14:48:41.026296Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-14T14:48:41.070107Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-14T14:48:41.069724Z&quot;}}" data-execution_count="10">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>xs <span class="op">=</span> np.linspace(<span class="op">-</span><span class="fl">1.5</span>, <span class="fl">1.5</span>, <span class="dv">300</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">5</span>))</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> b, ls <span class="kw">in</span> [(<span class="dv">2</span>, <span class="st">"--"</span>), (np.e, <span class="st">"-"</span>), (<span class="dv">3</span>, <span class="st">":"</span>)]:</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    label <span class="op">=</span> <span class="vs">r"</span><span class="dv">$</span><span class="vs">e</span><span class="dv">^</span><span class="vs">x</span><span class="dv">$</span><span class="vs">"</span> <span class="cf">if</span> b <span class="op">==</span> np.e <span class="cf">else</span> <span class="vs">rf"</span><span class="dv">$</span><span class="sc">{</span>b<span class="sc">}</span><span class="dv">^</span><span class="vs">x</span><span class="dv">$</span><span class="vs">"</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    ax.plot(xs, b<span class="op">**</span>xs, <span class="st">"k"</span>, ls<span class="op">=</span>ls, lw<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span>label)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>ax.plot(xs, <span class="dv">1</span> <span class="op">+</span> xs, lw<span class="op">=</span><span class="fl">1.5</span>, label<span class="op">=</span><span class="vs">r"slope-1 line </span><span class="dv">$</span><span class="vs">y = 1 </span><span class="op">+</span><span class="vs"> x</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>ax.plot(<span class="dv">0</span>, <span class="dv">1</span>, <span class="st">"ko"</span>)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(<span class="op">-</span><span class="fl">0.5</span>, <span class="dv">4</span>)</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="vs">r"Only </span><span class="dv">$</span><span class="vs">e</span><span class="dv">^</span><span class="vs">x</span><span class="dv">$</span><span class="vs"> has slope </span><span class="dv">$</span><span class="vs">1</span><span class="dv">$</span><span class="vs"> at </span><span class="dv">$</span><span class="kw">(</span><span class="vs">0,1</span><span class="kw">)</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="derivatives_of_polynomials_and_exp_functions_files/figure-html/cell-11-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Example 5.</strong> If <span class="math inline">\(f(x) = e^x - x\)</span>, find <span class="math inline">\(f'\)</span> and <span class="math inline">\(f''\)</span>.</p>
+<p><em>By hand.</em> <span class="math inline">\(f'(x) = e^x - 1\)</span> and <span class="math inline">\(f''(x) = e^x\)</span>. Since <span class="math inline">\(f''(x) &gt; 0\)</span> for all <span class="math inline">\(x\)</span>, <span class="math inline">\(f'\)</span> is always increasing. (Note that <span class="math inline">\(f'(0) = 0\)</span>: the graph has a horizontal tangent at <span class="math inline">\((0, 1)\)</span>.)</p>
+<div id="cell-21" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-14T14:48:41.071197Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-14T14:48:41.071144Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-14T14:48:41.074430Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-14T14:48:41.074144Z&quot;}}" data-execution_count="11">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> sp.exp(x) <span class="op">-</span> x</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>check(f, sp.exp(x) <span class="op">-</span> <span class="dv">1</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>check(sp.diff(f, x), sp.exp(x))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle \frac{d}{dx}\left(- x + e^{x}\right) = e^{x} - 1\)</span></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Agrees with SymPy: True</code></pre>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle \frac{d}{dx}\left(e^{x} - 1\right) = e^{x}\)</span></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Agrees with SymPy: True</code></pre>
+</div>
+</div>
+<p><strong>Example 6.</strong> At what point on <span class="math inline">\(y = e^x\)</span> is the tangent line parallel to <span class="math inline">\(y = 2x\)</span>?</p>
+<p><em>By hand.</em> Parallel lines have equal slopes, so we need <span class="math inline">\(y' = e^x = 2\)</span>. That gives <span class="math inline">\(x = \ln 2\)</span>, and <span class="math inline">\(y = e^{\ln 2} = 2\)</span>. The point is <span class="math inline">\((\ln 2,\ 2)\)</span>.</p>
+<div id="cell-23" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-14T14:48:41.075431Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-14T14:48:41.075380Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-14T14:48:41.079512Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-14T14:48:41.079118Z&quot;}}" data-execution_count="12">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>sol <span class="op">=</span> sp.solve(sp.Eq(sp.diff(sp.exp(x), x), <span class="dv">2</span>), x)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>display(Math(<span class="vs">rf"x = </span><span class="sc">{</span>sp<span class="sc">.</span>latex(sol[<span class="dv">0</span>])<span class="sc">}</span><span class="vs">, </span><span class="er">\</span><span class="vs">quad y = </span><span class="sc">{</span>sp<span class="sc">.</span>latex(sp.exp(sol[<span class="dv">0</span>]))<span class="sc">}</span><span class="vs">"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle x = \log{\left(2 \right)}, \quad y = 2\)</span></p>
+</div>
+</div>
+</section>
+<section id="a-numerical-sanity-check" class="level2">
+<h2 class="anchored" data-anchor-id="a-numerical-sanity-check">5. A numerical sanity check</h2>
+<p>Symbolic checks can hide algebra slips if we type the wrong function. As an independent check, we compare each by-hand derivative with a <strong>central difference</strong> <span class="math inline">\(\dfrac{f(x+h) - f(x-h)}{2h}\)</span> at many points.</p>
+<div id="cell-25" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-14T14:48:41.080477Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-14T14:48:41.080428Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-14T14:48:41.085606Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-14T14:48:41.085383Z&quot;}}" data-execution_count="13">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> numeric_check(f, fprime, a<span class="op">=</span><span class="fl">0.2</span>, b<span class="op">=</span><span class="fl">3.0</span>, step<span class="op">=</span><span class="fl">1e-5</span>):</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    fn, dfn <span class="op">=</span> sp.lambdify(x, f, <span class="st">"numpy"</span>), sp.lambdify(x, fprime, <span class="st">"numpy"</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    xs <span class="op">=</span> np.linspace(a, b, <span class="dv">200</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    approx <span class="op">=</span> (fn(xs <span class="op">+</span> step) <span class="op">-</span> fn(xs <span class="op">-</span> step)) <span class="op">/</span> (<span class="dv">2</span> <span class="op">*</span> step)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    exact <span class="op">=</span> dfn(xs)</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.<span class="bu">max</span>(np.<span class="bu">abs</span>(approx <span class="op">-</span> exact)) <span class="op">/</span> np.<span class="bu">max</span>(np.<span class="bu">abs</span>(exact))</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>tests <span class="op">=</span> {</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="vs">r"x</span><span class="dv">\s</span><span class="vs">qrt{x}"</span>: (x <span class="op">*</span> sp.sqrt(x), sp.Rational(<span class="dv">3</span>, <span class="dv">2</span>) <span class="op">*</span> sp.sqrt(x)),</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    <span class="vs">r"x</span><span class="dv">^</span><span class="vs">8 </span><span class="op">+</span><span class="vs"> 12x</span><span class="dv">^</span><span class="vs">5 - </span><span class="er">\</span><span class="vs">cdots"</span>: (p, <span class="dv">8</span><span class="op">*</span>x<span class="op">**</span><span class="dv">7</span> <span class="op">+</span> <span class="dv">60</span><span class="op">*</span>x<span class="op">**</span><span class="dv">4</span> <span class="op">-</span> <span class="dv">16</span><span class="op">*</span>x<span class="op">**</span><span class="dv">3</span> <span class="op">+</span> <span class="dv">30</span><span class="op">*</span>x<span class="op">**</span><span class="dv">2</span> <span class="op">-</span> <span class="dv">6</span>),</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    <span class="vs">r"x</span><span class="dv">^</span><span class="vs">4 - 6x</span><span class="dv">^</span><span class="vs">2 </span><span class="op">+</span><span class="vs"> 4"</span>: (x<span class="op">**</span><span class="dv">4</span> <span class="op">-</span> <span class="dv">6</span><span class="op">*</span>x<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> <span class="dv">4</span>, <span class="dv">4</span><span class="op">*</span>x<span class="op">**</span><span class="dv">3</span> <span class="op">-</span> <span class="dv">12</span><span class="op">*</span>x),</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    <span class="vs">r"e</span><span class="dv">^</span><span class="vs">x - x"</span>: (sp.exp(x) <span class="op">-</span> x, sp.exp(x) <span class="op">-</span> <span class="dv">1</span>),</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name, (f, fp) <span class="kw">in</span> tests.items():</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>    rel <span class="op">=</span> numeric_check(f, fp)</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>    display(Math(<span class="vs">rf"</span><span class="sc">{</span>name<span class="sc">}</span><span class="vs">: </span><span class="er">\</span><span class="vs">quad </span><span class="ch">\t</span><span class="vs">ext</span><span class="ch">{{</span><span class="vs">relative error</span><span class="ch">}}</span><span class="vs"> </span><span class="ch">\a</span><span class="vs">pprox </span><span class="sc">{</span>rel<span class="sc">:.1e}</span><span class="vs">"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle x\sqrt{x}: \quad \text{relative error} \approx 2.7e-11\)</span></p>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle x^8 + 12x^5 - \cdots: \quad \text{relative error} \approx 7.4e-11\)</span></p>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle x^4 - 6x^2 + 4: \quad \text{relative error} \approx 3.0e-11\)</span></p>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle e^x - x: \quad \text{relative error} \approx 3.0e-11\)</span></p>
+</div>
+</div>
+</section>
+<section id="practice-problems" class="level2">
+<h2 class="anchored" data-anchor-id="practice-problems">6. Practice problems</h2>
+<p>Try these by hand first, then run the cell below to check.</p>
+<ol type="1">
+<li><span class="math inline">\(f(x) = 5x^4 - 3x^{2/3} + \dfrac{7}{x}\)</span></li>
+<li><span class="math inline">\(y = \dfrac{x^2 + 4x + 3}{\sqrt x}\)</span> (<em>simplify first</em>)</li>
+<li><span class="math inline">\(y = 3e^x + \dfrac{4}{\sqrt[3]{x}}\)</span></li>
+<li>Find the tangent and normal lines to <span class="math inline">\(y = x^4 + 2e^x\)</span> at <span class="math inline">\((0, 2)\)</span>.</li>
+<li>For what values of <span class="math inline">\(x\)</span> does <span class="math inline">\(f(x) = x^3 + 3x^2 + x + 3\)</span> have a horizontal tangent?</li>
+<li>For what value of <span class="math inline">\(a\)</span> does the tangent line to <span class="math inline">\(y = e^x\)</span> at <span class="math inline">\(x = a\)</span> pass through the origin?</li>
+</ol>
+<div id="cell-27" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-14T14:48:41.086718Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-14T14:48:41.086652Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-14T14:48:41.117403Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-14T14:48:41.117101Z&quot;}}" data-execution_count="14">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>problems <span class="op">=</span> [</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    <span class="dv">5</span><span class="op">*</span>x<span class="op">**</span><span class="dv">4</span> <span class="op">-</span> <span class="dv">3</span><span class="op">*</span>x<span class="op">**</span>sp.Rational(<span class="dv">2</span>, <span class="dv">3</span>) <span class="op">+</span> <span class="dv">7</span><span class="op">/</span>x,</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    (x<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> <span class="dv">4</span><span class="op">*</span>x <span class="op">+</span> <span class="dv">3</span>) <span class="op">/</span> sp.sqrt(x),</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">3</span><span class="op">*</span>sp.exp(x) <span class="op">+</span> <span class="dv">4</span><span class="op">*</span>x<span class="op">**</span>sp.Rational(<span class="op">-</span><span class="dv">1</span>, <span class="dv">3</span>),</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, f <span class="kw">in</span> <span class="bu">enumerate</span>(problems, <span class="dv">1</span>):</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> sp.diff(f, x)</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> sp.factor(sp.simplify(df)) <span class="cf">if</span> i <span class="op">==</span> <span class="dv">2</span> <span class="cf">else</span> df</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    display(Math(<span class="vs">rf"</span><span class="ch">\t</span><span class="vs">ext</span><span class="ch">{{</span><span class="sc">{</span>i<span class="sc">}</span><span class="dv">.</span><span class="ch">}}</span><span class="er">\</span><span class="vs">quad </span><span class="ch">\f</span><span class="vs">rac</span><span class="ch">{{</span><span class="vs">d</span><span class="ch">}}{{</span><span class="vs">dx</span><span class="ch">}}</span><span class="er">\</span><span class="vs">left</span><span class="kw">(</span><span class="sc">{</span>sp<span class="sc">.</span>latex(f)<span class="sc">}</span><span class="ch">\r</span><span class="vs">ight</span><span class="kw">)</span><span class="vs"> = </span><span class="sc">{</span>sp<span class="sc">.</span>latex(df)<span class="sc">}</span><span class="vs">"</span>))</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. tangent and normal lines at (0, 2)</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> x<span class="op">**</span><span class="dv">4</span> <span class="op">+</span> <span class="dv">2</span><span class="op">*</span>sp.exp(x)</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> sp.diff(y, x).subs(x, <span class="dv">0</span>)</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>display(Math(<span class="vs">rf"</span><span class="ch">\t</span><span class="vs">ext</span><span class="ch">{{</span><span class="vs">4</span><span class="dv">.</span><span class="ch">}}</span><span class="er">\</span><span class="vs">quad </span><span class="ch">\t</span><span class="vs">ext</span><span class="ch">{{</span><span class="vs">tangent: </span><span class="ch">}}</span><span class="vs"> y = </span><span class="sc">{</span>sp<span class="sc">.</span>latex(<span class="dv">2</span> <span class="op">+</span> m<span class="op">*</span>x)<span class="sc">}</span><span class="vs">, </span><span class="er">\</span><span class="vs">qquad </span><span class="ch">\t</span><span class="vs">ext</span><span class="ch">{{</span><span class="vs">normal: </span><span class="ch">}}</span><span class="vs"> y = </span><span class="sc">{</span>sp<span class="sc">.</span>latex(<span class="dv">2</span> <span class="op">-</span> x<span class="op">/</span>m)<span class="sc">}</span><span class="vs">"</span>))</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. horizontal tangents</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> x<span class="op">**</span><span class="dv">3</span> <span class="op">+</span> <span class="dv">3</span><span class="op">*</span>x<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> x <span class="op">+</span> <span class="dv">3</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>display(Math(<span class="vs">rf"</span><span class="ch">\t</span><span class="vs">ext</span><span class="ch">{{</span><span class="vs">5</span><span class="dv">.</span><span class="ch">}}</span><span class="er">\</span><span class="vs">quad x = </span><span class="sc">{</span>sp<span class="sc">.</span>latex(sp.solve(sp.diff(f, x), x))<span class="sc">}</span><span class="vs">"</span>))</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 6. tangent at x = a is y = e^a + e^a (x - a); set x = 0, y = 0</span></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> sp.symbols(<span class="st">"a"</span>)</span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>display(Math(<span class="vs">rf"</span><span class="ch">\t</span><span class="vs">ext</span><span class="ch">{{</span><span class="vs">6</span><span class="dv">.</span><span class="ch">}}</span><span class="er">\</span><span class="vs">quad a = </span><span class="sc">{</span>sp<span class="sc">.</span>latex(sp.solve(sp.exp(a) <span class="op">+</span> sp.exp(a) <span class="op">*</span> (<span class="dv">0</span> <span class="op">-</span> a), a))<span class="sc">}</span><span class="vs">"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle \text{1.}\quad \frac{d}{dx}\left(- 3 x^{\frac{2}{3}} + 5 x^{4} + \frac{7}{x}\right) = 20 x^{3} - \frac{7}{x^{2}} - \frac{2}{\sqrt[3]{x}}\)</span></p>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle \text{2.}\quad \frac{d}{dx}\left(\frac{x^{2} + 4 x + 3}{\sqrt{x}}\right) = \frac{3 x^{2} + 4 x - 3}{2 x^{\frac{3}{2}}}\)</span></p>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle \text{3.}\quad \frac{d}{dx}\left(3 e^{x} + \frac{4}{\sqrt[3]{x}}\right) = 3 e^{x} - \frac{4}{3 x^{\frac{4}{3}}}\)</span></p>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle \text{4.}\quad \text{tangent: } y = 2 x + 2, \qquad \text{normal: } y = 2 - \frac{x}{2}\)</span></p>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle \text{5.}\quad x = \left[ -1 - \frac{\sqrt{6}}{3}, \  -1 + \frac{\sqrt{6}}{3}\right]\)</span></p>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle \text{6.}\quad a = \left[ 1\right]\)</span></p>
+</div>
+</div>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Derivative</th>
+<th>Rule</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(c\)</span></td>
+<td><span class="math inline">\(0\)</span></td>
+<td>Constant</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(x^n\)</span></td>
+<td><span class="math inline">\(n x^{n-1}\)</span></td>
+<td>Power (<span class="math inline">\(n \in \mathbb{R}\)</span>)</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(c\,f\)</span></td>
+<td><span class="math inline">\(c\,f'\)</span></td>
+<td>Constant Multiple</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(f \pm g\)</span></td>
+<td><span class="math inline">\(f' \pm g'\)</span></td>
+<td>Sum / Difference</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(b^x\)</span></td>
+<td><span class="math inline">\(f'(0)\,b^x = b^x \ln b\)</span></td>
+<td>Exponential</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(e^x\)</span></td>
+<td><span class="math inline">\(e^x\)</span></td>
+<td>Natural exponential</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key ideas.</strong> - Rewrite roots and reciprocals as powers before you differentiate. - Polynomials are differentiated term by term. - <span class="math inline">\(e\)</span> is defined so that <span class="math inline">\(e^x\)</span> has slope <span class="math inline">\(1\)</span> at <span class="math inline">\(x = 0\)</span>. That is what makes <span class="math inline">\((e^x)' = e^x\)</span>. - Tangent line at <span class="math inline">\(x = a\)</span>: <span class="math inline">\(y = f(a) + f'(a)(x - a)\)</span>. The normal line has slope <span class="math inline">\(-1/f'(a)\)</span>.</p>
+<p><strong>Next:</strong> <a href="./product_and_quotient_rules.html">§3.2 The Product and Quotient Rules</a>.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
