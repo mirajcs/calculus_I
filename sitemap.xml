@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://mirajcs.github.io/calculus_I/product_and_quotient_rules.html</loc>
-    <lastmod>2026-10-14T15:32:25.874Z</lastmod>
-  </url>
-  <url>
-    <loc>https://mirajcs.github.io/calculus_I/index.html</loc>
-    <lastmod>2026-10-14T15:32:25.874Z</lastmod>
+    <loc>https://mirajcs.github.io/calculus_I/derivatives_of_trigonometric_functions.html</loc>
+    <lastmod>2026-10-18T23:41:11.480Z</lastmod>
   </url>
   <url>
     <loc>https://mirajcs.github.io/calculus_I/derivatives_of_polynomials_and_exp_functions.html</loc>
-    <lastmod>2026-10-14T15:32:25.874Z</lastmod>
+    <lastmod>2026-10-18T23:41:11.480Z</lastmod>
+  </url>
+  <url>
+    <loc>https://mirajcs.github.io/calculus_I/index.html</loc>
+    <lastmod>2026-10-18T23:41:11.480Z</lastmod>
+  </url>
+  <url>
+    <loc>https://mirajcs.github.io/calculus_I/product_and_quotient_rules.html</loc>
+    <lastmod>2026-10-18T23:41:11.481Z</lastmod>
   </url>
 </urlset>
