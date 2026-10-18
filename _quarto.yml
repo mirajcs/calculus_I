@@ -5,6 +5,7 @@ project:
     - index.qmd
     - derivatives_of_polynomials_and_exp_functions.ipynb
     - product_and_quotient_rules.ipynb
+    - derivatives_of_trigonometric_functions.ipynb
 
 website:
   title: "Calculus I"
@@ -16,6 +17,8 @@ website:
             text: "3.1 Polynomials and Exponential Functions"
           - href: product_and_quotient_rules.ipynb
             text: "3.2 The Product and Quotient Rules"
+          - href: derivatives_of_trigonometric_functions.ipynb
+            text: "3.3 Derivatives of Trigonometric Functions"
   sidebar:
     style: docked
     contents:
@@ -27,6 +30,8 @@ website:
             text: "3.1 Polynomials and Exponential Functions"
           - href: product_and_quotient_rules.ipynb
             text: "3.2 The Product and Quotient Rules"
+          - href: derivatives_of_trigonometric_functions.ipynb
+            text: "3.3 Derivatives of Trigonometric Functions"
 
 format:
   html:
