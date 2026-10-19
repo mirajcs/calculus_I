@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Miraj Samarakkody">
-<meta name="dcterms.date" content="2026-10-18">
+<meta name="dcterms.date" content="2026-10-19">
 
 <title>Lecture Notes: Derivatives of Trigonometric Functions – Calculus I</title>
 <style>
@@ -281,7 +281,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 18, 2026</p>
+      <p class="date">October 19, 2026</p>
     </div>
   </div>
   
@@ -295,7 +295,7 @@ window.Quarto = {
 
 <p><em>Stewart, <strong>Calculus</strong>, 9th ed., §3.3</em></p>
 <p><strong>Learning objectives.</strong> By the end of this lecture you should be able to: 1. Explain the two key limits <span class="math inline">\(\displaystyle\lim_{\theta\to0}\frac{\sin\theta}{\theta} = 1\)</span> and <span class="math inline">\(\displaystyle\lim_{\theta\to0}\frac{\cos\theta - 1}{\theta} = 0\)</span>, and why they need <strong>radians</strong>. 2. Derive <span class="math inline">\(\dfrac{d}{dx}(\sin x) = \cos x\)</span> and <span class="math inline">\(\dfrac{d}{dx}(\cos x) = -\sin x\)</span> from the limit definition. 3. Use the Quotient Rule to find the derivatives of <span class="math inline">\(\tan x\)</span>, <span class="math inline">\(\cot x\)</span>, <span class="math inline">\(\sec x\)</span>, and <span class="math inline">\(\csc x\)</span>. 4. Apply these formulas to products, quotients, higher derivatives, and simple harmonic motion. 5. Evaluate trigonometric limits by reducing them to <span class="math inline">\(\dfrac{\sin\theta}{\theta}\)</span>. 6. Check every answer symbolically with <strong>SymPy</strong> and numerically with <strong>NumPy</strong>.</p>
-<div id="cell-02" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-18T23:38:37.422433Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-18T23:38:37.422280Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-18T23:38:37.688728Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-18T23:38:37.688281Z&quot;}}" data-execution_count="1">
+<div id="cell-02" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-18T23:38:37.422433Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-18T23:38:37.422280Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-18T23:38:37.688728Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-18T23:38:37.688281Z&quot;}}" data-execution_count="20">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -346,40 +346,30 @@ window.Quarto = {
 </table>
 <p>In this section we add the six trigonometric functions. <strong>Throughout, angles are measured in radians.</strong></p>
 <p>As before, the helper below compares a derivative found by hand with SymPy’s answer.</p>
-<div id="cell-04" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-18T23:38:37.690072Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-18T23:38:37.689984Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-18T23:38:37.691732Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-18T23:38:37.691418Z&quot;}}" data-execution_count="2">
-<details open="" class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> check(f, by_hand, var<span class="op">=</span>x):</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Display d/dvar f = by_hand and confirm it agrees with SymPy."""</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    ok <span class="op">=</span> sp.simplify(sp.diff(f, var) <span class="op">-</span> by_hand) <span class="op">==</span> <span class="dv">0</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    display(Math(<span class="vs">rf"</span><span class="ch">\f</span><span class="vs">rac</span><span class="ch">{{</span><span class="vs">d</span><span class="ch">}}{{</span><span class="vs">d</span><span class="sc">{</span>sp<span class="sc">.</span>latex(var)<span class="sc">}</span><span class="ch">}}</span><span class="er">\</span><span class="vs">left</span><span class="kw">(</span><span class="sc">{</span>sp<span class="sc">.</span>latex(f)<span class="sc">}</span><span class="ch">\r</span><span class="vs">ight</span><span class="kw">)</span><span class="vs"> = </span><span class="sc">{</span>sp<span class="sc">.</span>latex(by_hand)<span class="sc">}</span><span class="vs">"</span>))</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Agrees with SymPy:"</span>, ok)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
 </section>
 <section id="a-graphical-guess" class="level2">
 <h2 class="anchored" data-anchor-id="a-graphical-guess">2. A graphical guess</h2>
 <p>Before proving anything, let’s estimate the slope of <span class="math inline">\(y = \sin x\)</span> at many points and plot it. The slope is <span class="math inline">\(1\)</span> at <span class="math inline">\(x = 0\)</span>, <span class="math inline">\(0\)</span> at the peaks and troughs, and <span class="math inline">\(-1\)</span> at <span class="math inline">\(x = \pi\)</span>. That pattern looks like <span class="math inline">\(\cos x\)</span>.</p>
-<div id="cell-06" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-18T23:38:37.692859Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-18T23:38:37.692785Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-18T23:38:37.794715Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-18T23:38:37.794225Z&quot;}}" data-execution_count="3">
+<div id="cell-06" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-18T23:38:37.692859Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-18T23:38:37.692785Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-18T23:38:37.794715Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-18T23:38:37.794225Z&quot;}}" data-execution_count="21">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>xs <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">2</span> <span class="op">*</span> np.pi, <span class="dv">2</span> <span class="op">*</span> np.pi, <span class="dv">400</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>slopes <span class="op">=</span> np.gradient(np.sin(xs), xs)  <span class="co"># numerical estimate of the slope</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>))</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>ax.plot(xs, np.sin(xs), <span class="st">"k"</span>, lw<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="vs">r"</span><span class="dv">$</span><span class="vs">y = </span><span class="dv">\s</span><span class="vs">in x</span><span class="dv">$</span><span class="vs">"</span>)</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>ax.plot(xs, slopes, lw<span class="op">=</span><span class="dv">4</span>, alpha<span class="op">=</span><span class="fl">0.4</span>, label<span class="op">=</span><span class="vs">r"estimated slope of </span><span class="dv">$\s</span><span class="vs">in x</span><span class="dv">$</span><span class="vs">"</span>)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>ax.plot(xs, np.cos(xs), <span class="st">"--"</span>, lw<span class="op">=</span><span class="fl">1.5</span>, label<span class="op">=</span><span class="vs">r"</span><span class="dv">$</span><span class="vs">y = </span><span class="er">\</span><span class="vs">cos x</span><span class="dv">$</span><span class="vs">"</span>)</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>ax.axhline(<span class="dv">0</span>, color<span class="op">=</span><span class="st">"gray"</span>, lw<span class="op">=</span><span class="fl">0.5</span>)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>ax.set_xticks(np.arange(<span class="op">-</span><span class="dv">2</span>, <span class="dv">3</span>) <span class="op">*</span> np.pi, [<span class="vs">r"</span><span class="dv">$</span><span class="vs">-2</span><span class="er">\</span><span class="vs">pi</span><span class="dv">$</span><span class="vs">"</span>, <span class="vs">r"</span><span class="dv">$</span><span class="vs">-</span><span class="er">\</span><span class="vs">pi</span><span class="dv">$</span><span class="vs">"</span>, <span class="st">"0"</span>, <span class="vs">r"</span><span class="dv">$</span><span class="er">\</span><span class="vs">pi</span><span class="dv">$</span><span class="vs">"</span>, <span class="vs">r"</span><span class="dv">$</span><span class="vs">2</span><span class="er">\</span><span class="vs">pi</span><span class="dv">$</span><span class="vs">"</span>])</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>ax.legend(loc<span class="op">=</span><span class="st">"upper center"</span>, bbox_to_anchor<span class="op">=</span>(<span class="fl">0.5</span>, <span class="op">-</span><span class="fl">0.1</span>), ncol<span class="op">=</span><span class="dv">3</span>, frameon<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="vs">r"The slope of </span><span class="dv">$\s</span><span class="vs">in x</span><span class="dv">$</span><span class="vs"> looks like </span><span class="dv">$</span><span class="er">\</span><span class="vs">cos x</span><span class="dv">$</span><span class="vs">"</span>)</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>xs <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">2</span> <span class="op">*</span> np.pi, <span class="dv">2</span> <span class="op">*</span> np.pi, <span class="dv">400</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>slopes <span class="op">=</span> np.gradient(np.sin(xs), xs)  <span class="co"># numerical estimate of the slope</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>))</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>ax.plot(xs, np.sin(xs), <span class="st">"k"</span>, lw<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="vs">r"</span><span class="dv">$</span><span class="vs">y = </span><span class="dv">\s</span><span class="vs">in x</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>ax.plot(xs, slopes, lw<span class="op">=</span><span class="dv">4</span>, alpha<span class="op">=</span><span class="fl">0.4</span>, label<span class="op">=</span><span class="vs">r"estimated slope of </span><span class="dv">$\s</span><span class="vs">in x</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>ax.plot(xs, np.cos(xs), <span class="st">"--"</span>, lw<span class="op">=</span><span class="fl">1.5</span>, label<span class="op">=</span><span class="vs">r"</span><span class="dv">$</span><span class="vs">y = </span><span class="er">\</span><span class="vs">cos x</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>ax.axhline(<span class="dv">0</span>, color<span class="op">=</span><span class="st">"gray"</span>, lw<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>ax.set_xticks(np.arange(<span class="op">-</span><span class="dv">2</span>, <span class="dv">3</span>) <span class="op">*</span> np.pi, [<span class="vs">r"</span><span class="dv">$</span><span class="vs">-2</span><span class="er">\</span><span class="vs">pi</span><span class="dv">$</span><span class="vs">"</span>, <span class="vs">r"</span><span class="dv">$</span><span class="vs">-</span><span class="er">\</span><span class="vs">pi</span><span class="dv">$</span><span class="vs">"</span>, <span class="st">"0"</span>, <span class="vs">r"</span><span class="dv">$</span><span class="er">\</span><span class="vs">pi</span><span class="dv">$</span><span class="vs">"</span>, <span class="vs">r"</span><span class="dv">$</span><span class="vs">2</span><span class="er">\</span><span class="vs">pi</span><span class="dv">$</span><span class="vs">"</span>])</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>ax.legend(loc<span class="op">=</span><span class="st">"upper center"</span>, bbox_to_anchor<span class="op">=</span>(<span class="fl">0.5</span>, <span class="op">-</span><span class="fl">0.1</span>), ncol<span class="op">=</span><span class="dv">3</span>, frameon<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="vs">r"The slope of </span><span class="dv">$\s</span><span class="vs">in x</span><span class="dv">$</span><span class="vs"> looks like </span><span class="dv">$</span><span class="er">\</span><span class="vs">cos x</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="derivatives_of_trigonometric_functions_files/figure-html/cell-4-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="derivatives_of_trigonometric_functions_files/figure-html/cell-3-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -394,16 +384,16 @@ window.Quarto = {
 <p><strong>Proof.</strong> Multiply the numerator and denominator by <span class="math inline">\(\cos\theta + 1\)</span> and use <span class="math inline">\(\cos^2\theta - 1 = -\sin^2\theta\)</span>: <span class="math display">\[\frac{\cos\theta - 1}{\theta} = \frac{-\sin^2\theta}{\theta(\cos\theta+1)} = -\frac{\sin\theta}{\theta}\cdot\frac{\sin\theta}{\cos\theta + 1}
 \;\xrightarrow{\theta\to0}\; -1\cdot\frac{0}{2} = 0. \qquad\blacksquare\]</span></p>
 <p>A table of values supports both limits:</p>
-<div id="cell-08" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-18T23:38:37.795780Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-18T23:38:37.795700Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-18T23:38:37.812825Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-18T23:38:37.812430Z&quot;}}" data-execution_count="4">
+<div id="cell-08" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-18T23:38:37.795780Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-18T23:38:37.795700Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-18T23:38:37.812825Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-18T23:38:37.812430Z&quot;}}" data-execution_count="22">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="st">'theta'</span><span class="sc">:&gt;10}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'sin(θ)/θ'</span><span class="sc">:&gt;14}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'(cos(θ)-1)/θ'</span><span class="sc">:&gt;16}</span><span class="ss">"</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> th <span class="kw">in</span> [<span class="dv">1</span>, <span class="fl">0.5</span>, <span class="fl">0.1</span>, <span class="fl">0.01</span>, <span class="fl">0.001</span>]:</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>th<span class="sc">:&gt;10}</span><span class="ss"> </span><span class="sc">{</span>np<span class="sc">.</span>sin(th) <span class="op">/</span> th<span class="sc">:&gt;14.10f}</span><span class="ss"> </span><span class="sc">{</span>(np.cos(th) <span class="op">-</span> <span class="dv">1</span>) <span class="op">/</span> th<span class="sc">:&gt;16.10f}</span><span class="ss">"</span>)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>()</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"SymPy: lim sin(θ)/θ     ="</span>, sp.limit(sp.sin(theta) <span class="op">/</span> theta, theta, <span class="dv">0</span>))</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"SymPy: lim (cos(θ)-1)/θ ="</span>, sp.limit((sp.cos(theta) <span class="op">-</span> <span class="dv">1</span>) <span class="op">/</span> theta, theta, <span class="dv">0</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="st">'theta'</span><span class="sc">:&gt;10}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'sin(θ)/θ'</span><span class="sc">:&gt;14}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'(cos(θ)-1)/θ'</span><span class="sc">:&gt;16}</span><span class="ss">"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> th <span class="kw">in</span> [<span class="dv">1</span>, <span class="fl">0.5</span>, <span class="fl">0.1</span>, <span class="fl">0.01</span>, <span class="fl">0.001</span>]:</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>th<span class="sc">:&gt;10}</span><span class="ss"> </span><span class="sc">{</span>np<span class="sc">.</span>sin(th) <span class="op">/</span> th<span class="sc">:&gt;14.10f}</span><span class="ss"> </span><span class="sc">{</span>(np.cos(th) <span class="op">-</span> <span class="dv">1</span>) <span class="op">/</span> th<span class="sc">:&gt;16.10f}</span><span class="ss">"</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>()</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"SymPy: lim sin(θ)/θ     ="</span>, sp.limit(sp.sin(theta) <span class="op">/</span> theta, theta, <span class="dv">0</span>))</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"SymPy: lim (cos(θ)-1)/θ ="</span>, sp.limit((sp.cos(theta) <span class="op">-</span> <span class="dv">1</span>) <span class="op">/</span> theta, theta, <span class="dv">0</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>     theta       sin(θ)/θ     (cos(θ)-1)/θ
@@ -418,11 +408,11 @@ SymPy: lim (cos(θ)-1)/θ = 0</code></pre>
 </div>
 </div>
 <p><strong>Why radians?</strong> The proof used the fact that a sector of angle <span class="math inline">\(\theta\)</span> in a unit circle has area <span class="math inline">\(\tfrac12\theta\)</span>, which is true only when <span class="math inline">\(\theta\)</span> is in radians. If <span class="math inline">\(\theta\)</span> is in degrees, then <span class="math inline">\(\sin(\theta^\circ) = \sin\!\left(\tfrac{\pi\theta}{180}\right)\)</span> and <span class="math display">\[\lim_{\theta\to0}\frac{\sin(\theta^\circ)}{\theta} = \frac{\pi}{180} \approx 0.01745.\]</span> Every derivative formula below would pick up an ugly factor of <span class="math inline">\(\pi/180\)</span>.</p>
-<div id="cell-10" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-18T23:38:37.813966Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-18T23:38:37.813910Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-18T23:38:37.816345Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-18T23:38:37.816043Z&quot;}}" data-execution_count="5">
+<div id="cell-10" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-18T23:38:37.813966Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-18T23:38:37.813910Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-18T23:38:37.816345Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-18T23:38:37.816043Z&quot;}}" data-execution_count="23">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"lim sin(θ°)/θ ="</span>, sp.limit(sp.sin(sp.pi <span class="op">*</span> theta <span class="op">/</span> <span class="dv">180</span>) <span class="op">/</span> theta, theta, <span class="dv">0</span>),</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>      <span class="st">"≈"</span>, <span class="bu">float</span>(sp.pi <span class="op">/</span> <span class="dv">180</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"lim sin(θ°)/θ ="</span>, sp.limit(sp.sin(sp.pi <span class="op">*</span> theta <span class="op">/</span> <span class="dv">180</span>) <span class="op">/</span> theta, theta, <span class="dv">0</span>),</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>      <span class="st">"≈"</span>, <span class="bu">float</span>(sp.pi <span class="op">/</span> <span class="dv">180</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>lim sin(θ°)/θ = pi/180 ≈ 0.017453292519943295</code></pre>
@@ -438,12 +428,12 @@ SymPy: lim (cos(θ)-1)/θ = 0</code></pre>
 <p><strong>Proof.</strong> Use <span class="math inline">\(\cos(x+h) = \cos x\cos h - \sin x\sin h\)</span>: <span class="math display">\[\frac{\cos(x+h) - \cos x}{h} = \cos x\cdot\frac{\cos h - 1}{h} - \sin x\cdot\frac{\sin h}{h}
 \;\xrightarrow{h\to0}\; \cos x\cdot 0 - \sin x\cdot 1 = -\sin x. \qquad\blacksquare\]</span></p>
 <p>SymPy can take the limit of the difference quotient directly:</p>
-<div id="cell-12" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-18T23:38:37.817350Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-18T23:38:37.817295Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-18T23:38:37.925248Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-18T23:38:37.924869Z&quot;}}" data-execution_count="6">
+<div id="cell-12" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-18T23:38:37.817350Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-18T23:38:37.817295Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-18T23:38:37.925248Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-18T23:38:37.924869Z&quot;}}" data-execution_count="24">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> f <span class="kw">in</span> [sp.sin(x), sp.cos(x)]:</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    dq <span class="op">=</span> (f.subs(x, x <span class="op">+</span> h) <span class="op">-</span> f) <span class="op">/</span> h</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    display(Math(<span class="vs">rf"</span><span class="er">\</span><span class="vs">lim_</span><span class="ch">{{</span><span class="vs">h</span><span class="ch">\t</span><span class="vs">o0</span><span class="ch">}}</span><span class="vs"> </span><span class="sc">{</span>sp<span class="sc">.</span>latex(dq)<span class="sc">}</span><span class="vs"> = </span><span class="sc">{</span>sp<span class="sc">.</span>latex(sp.limit(dq, h, <span class="dv">0</span>))<span class="sc">}</span><span class="vs">"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> f <span class="kw">in</span> [sp.sin(x), sp.cos(x)]:</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    dq <span class="op">=</span> (f.subs(x, x <span class="op">+</span> h) <span class="op">-</span> f) <span class="op">/</span> h</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    display(Math(<span class="vs">rf"</span><span class="er">\</span><span class="vs">lim_</span><span class="ch">{{</span><span class="vs">h</span><span class="ch">\t</span><span class="vs">o0</span><span class="ch">}}</span><span class="vs"> </span><span class="sc">{</span>sp<span class="sc">.</span>latex(dq)<span class="sc">}</span><span class="vs"> = </span><span class="sc">{</span>sp<span class="sc">.</span>latex(sp.limit(dq, h, <span class="dv">0</span>))<span class="sc">}</span><span class="vs">"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display cell-output-markdown">
 <p><span class="math inline">\(\displaystyle \lim_{h\to0} \frac{- \sin{\left(x \right)} + \sin{\left(h + x \right)}}{h} = \cos{\left(x \right)}\)</span></p>
@@ -454,16 +444,14 @@ SymPy: lim (cos(θ)-1)/θ = 0</code></pre>
 </div>
 <p><strong>Example 1.</strong> Differentiate <span class="math inline">\(y = x^2\sin x\)</span>.</p>
 <p><em>By hand (Product Rule).</em> <span class="math display">\[y' = x^2\,\frac{d}{dx}(\sin x) + \sin x\,\frac{d}{dx}(x^2) = x^2\cos x + 2x\sin x.\]</span></p>
-<div id="cell-14" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-18T23:38:37.926287Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-18T23:38:37.926232Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-18T23:38:37.929427Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-18T23:38:37.929040Z&quot;}}" data-execution_count="7">
+<div id="cell-14" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-18T23:38:37.926287Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-18T23:38:37.926232Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-18T23:38:37.929427Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-18T23:38:37.929040Z&quot;}}" data-execution_count="25">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>check(x<span class="op">**</span><span class="dv">2</span> <span class="op">*</span> sp.sin(x), x<span class="op">**</span><span class="dv">2</span> <span class="op">*</span> sp.cos(x) <span class="op">+</span> <span class="dv">2</span><span class="op">*</span>x <span class="op">*</span> sp.sin(x))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>y_prime <span class="op">=</span> sp.diff(x<span class="op">**</span><span class="dv">2</span> <span class="op">*</span> sp.sin(x), x)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>y_prime</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div class="cell-output cell-output-display cell-output-markdown">
-<p><span class="math inline">\(\displaystyle \frac{d}{dx}\left(x^{2} \sin{\left(x \right)}\right) = x^{2} \cos{\left(x \right)} + 2 x \sin{\left(x \right)}\)</span></p>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Agrees with SymPy: True</code></pre>
+<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="25">
+<p><span class="math inline">\(\displaystyle x^{2} \cos{\left(x \right)} + 2 x \sin{\left(x \right)}\)</span></p>
 </div>
 </div>
 </section>
@@ -513,136 +501,98 @@ SymPy: lim (cos(θ)-1)/θ = 0</code></pre>
 </tbody>
 </table>
 <p><strong>Memory aid:</strong> the functions whose names start with <strong>“c”</strong> (cosine, cosecant, cotangent) have a <strong>minus sign</strong> in their derivatives. Each “co-” formula comes from the matching formula by swapping every function with its co-function and adding a minus sign.</p>
-<div id="cell-16" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-18T23:38:37.930346Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-18T23:38:37.930298Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-18T23:38:37.978148Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-18T23:38:37.977752Z&quot;}}" data-execution_count="8">
-<details open="" class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>table <span class="op">=</span> [</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    (sp.sin(x), sp.cos(x)),</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    (sp.cos(x), <span class="op">-</span>sp.sin(x)),</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    (sp.tan(x), sp.sec(x)<span class="op">**</span><span class="dv">2</span>),</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    (sp.csc(x), <span class="op">-</span>sp.csc(x) <span class="op">*</span> sp.cot(x)),</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    (sp.sec(x), sp.sec(x) <span class="op">*</span> sp.tan(x)),</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    (sp.cot(x), <span class="op">-</span>sp.csc(x)<span class="op">**</span><span class="dv">2</span>),</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> f, df <span class="kw">in</span> table:</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    check(f, df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output cell-output-display cell-output-markdown">
-<p><span class="math inline">\(\displaystyle \frac{d}{dx}\left(\sin{\left(x \right)}\right) = \cos{\left(x \right)}\)</span></p>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Agrees with SymPy: True</code></pre>
-</div>
-<div class="cell-output cell-output-display cell-output-markdown">
-<p><span class="math inline">\(\displaystyle \frac{d}{dx}\left(\cos{\left(x \right)}\right) = - \sin{\left(x \right)}\)</span></p>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Agrees with SymPy: True</code></pre>
-</div>
-<div class="cell-output cell-output-display cell-output-markdown">
-<p><span class="math inline">\(\displaystyle \frac{d}{dx}\left(\tan{\left(x \right)}\right) = \sec^{2}{\left(x \right)}\)</span></p>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Agrees with SymPy: True</code></pre>
-</div>
-<div class="cell-output cell-output-display cell-output-markdown">
-<p><span class="math inline">\(\displaystyle \frac{d}{dx}\left(\csc{\left(x \right)}\right) = - \cot{\left(x \right)} \csc{\left(x \right)}\)</span></p>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Agrees with SymPy: True</code></pre>
-</div>
-<div class="cell-output cell-output-display cell-output-markdown">
-<p><span class="math inline">\(\displaystyle \frac{d}{dx}\left(\sec{\left(x \right)}\right) = \tan{\left(x \right)} \sec{\left(x \right)}\)</span></p>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Agrees with SymPy: True</code></pre>
-</div>
-<div class="cell-output cell-output-display cell-output-markdown">
-<p><span class="math inline">\(\displaystyle \frac{d}{dx}\left(\cot{\left(x \right)}\right) = - \csc^{2}{\left(x \right)}\)</span></p>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Agrees with SymPy: True</code></pre>
-</div>
-</div>
 <p><strong>Example 2.</strong> Differentiate <span class="math inline">\(f(x) = \dfrac{\sec x}{1 + \tan x}\)</span>. For which values of <span class="math inline">\(x\)</span> does the graph of <span class="math inline">\(f\)</span> have a horizontal tangent?</p>
 <p><em>By hand (Quotient Rule).</em> <span class="math display">\[f'(x) = \frac{(1+\tan x)\sec x\tan x - \sec x\cdot\sec^2 x}{(1+\tan x)^2}
 = \frac{\sec x\,(\tan x + \tan^2 x - \sec^2 x)}{(1+\tan x)^2}
 = \frac{\sec x\,(\tan x - 1)}{(1+\tan x)^2},\]</span> using <span class="math inline">\(\sec^2 x = \tan^2 x + 1\)</span>.</p>
 <p>Since <span class="math inline">\(\sec x\)</span> is never <span class="math inline">\(0\)</span>, <span class="math inline">\(f'(x) = 0\)</span> exactly when <span class="math inline">\(\tan x = 1\)</span>, that is, at <span class="math inline">\(x = n\pi + \dfrac{\pi}{4}\)</span> for any integer <span class="math inline">\(n\)</span>.</p>
-<div id="cell-18" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-18T23:38:37.979306Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-18T23:38:37.979251Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-18T23:38:37.997645Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-18T23:38:37.997256Z&quot;}}" data-execution_count="9">
+<div id="cell-18" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-18T23:38:37.979306Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-18T23:38:37.979251Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-18T23:38:37.997645Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-18T23:38:37.997256Z&quot;}}" data-execution_count="26">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> sp.sec(x) <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> sp.tan(x))</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>check(f, sp.sec(x) <span class="op">*</span> (sp.tan(x) <span class="op">-</span> <span class="dv">1</span>) <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> sp.tan(x))<span class="op">**</span><span class="dv">2</span>)</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Horizontal tangents in [0, 2π): solve tan x = 1</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>roots <span class="op">=</span> sp.solveset(sp.tan(x) <span class="op">-</span> <span class="dv">1</span>, x, sp.Interval.Ropen(<span class="dv">0</span>, <span class="dv">2</span> <span class="op">*</span> sp.pi))</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"tan x = 1 on [0, 2π):"</span>, roots)</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"f'(x) at those points:"</span>, [sp.simplify(sp.diff(f, x).subs(x, r)) <span class="cf">for</span> r <span class="kw">in</span> roots])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> sp.sec(x) <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> sp.tan(x))</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> sp.diff(f, x)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># the derivative, raw and simplified</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>display(Math(<span class="vs">rf"f'</span><span class="kw">(</span><span class="vs">x</span><span class="kw">)</span><span class="vs"> = </span><span class="sc">{</span>sp<span class="sc">.</span>latex(df)<span class="sc">}</span><span class="vs">"</span>))</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>display(Math(<span class="vs">rf"f'</span><span class="kw">(</span><span class="vs">x</span><span class="kw">)</span><span class="vs"> = </span><span class="sc">{</span>sp<span class="sc">.</span>latex(sp.factor(sp.simplify(df)))<span class="sc">}</span><span class="vs">"</span>))</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co"># horizontal tangents on [0, 2π)</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>roots <span class="op">=</span> sp.solveset(sp.tan(x) <span class="op">-</span> <span class="dv">1</span>, x, sp.Interval.Ropen(<span class="dv">0</span>, <span class="dv">2</span> <span class="op">*</span> sp.pi))</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>display(Math(<span class="vs">rf"</span><span class="ch">\t</span><span class="vs">an x = 1 </span><span class="ch">\t</span><span class="vs">ext</span><span class="ch">{{</span><span class="vs"> on </span><span class="ch">}}</span><span class="vs"> </span><span class="pp">[0, 2</span><span class="er">\</span><span class="pp">pi): </span><span class="er">\</span><span class="pp">quad x </span><span class="er">\</span><span class="pp">in </span><span class="sc">{</span>sp<span class="sc">.</span>latex(roots)<span class="sc">}</span><span class="vs">"</span>))</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>values <span class="op">=</span> [sp.simplify(df.subs(x, r)) <span class="cf">for</span> r <span class="kw">in</span> roots]</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>display(Math(<span class="st">", </span><span class="ch">\\</span><span class="st">quad "</span>.join(<span class="vs">rf"f'</span><span class="er">\</span><span class="vs">left</span><span class="kw">(</span><span class="sc">{</span>sp<span class="sc">.</span>latex(r)<span class="sc">}</span><span class="ch">\r</span><span class="vs">ight</span><span class="kw">)</span><span class="vs"> = </span><span class="sc">{</span>sp<span class="sc">.</span>latex(v)<span class="sc">}</span><span class="vs">"</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>                               <span class="cf">for</span> r, v <span class="kw">in</span> <span class="bu">zip</span>(roots, values))))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display cell-output-markdown">
-<p><span class="math inline">\(\displaystyle \frac{d}{dx}\left(\frac{\sec{\left(x \right)}}{\tan{\left(x \right)} + 1}\right) = \frac{\left(\tan{\left(x \right)} - 1\right) \sec{\left(x \right)}}{\left(\tan{\left(x \right)} + 1\right)^{2}}\)</span></p>
+<p><span class="math inline">\(\displaystyle f'(x) = \frac{\tan{\left(x \right)} \sec{\left(x \right)}}{\tan{\left(x \right)} + 1} + \frac{\left(- \tan^{2}{\left(x \right)} - 1\right) \sec{\left(x \right)}}{\left(\tan{\left(x \right)} + 1\right)^{2}}\)</span></p>
 </div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Agrees with SymPy: True
-tan x = 1 on [0, 2π): {pi/4, 5*pi/4}
-f'(x) at those points: [0, 0]</code></pre>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle f'(x) = \frac{\left(\tan{\left(x \right)} - 1\right) \sec{\left(x \right)}}{\left(\tan{\left(x \right)} + 1\right)^{2}}\)</span></p>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle \tan x = 1 \text{ on } [0, 2\pi): \quad x \in \left\{\frac{\pi}{4}, \frac{5 \pi}{4}\right\}\)</span></p>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle f'\left(\frac{\pi}{4}\right) = 0, \quad f'\left(\frac{5 \pi}{4}\right) = 0\)</span></p>
 </div>
 </div>
 <p><strong>Example 3 (simple harmonic motion).</strong> An object at the end of a vertical spring is stretched <span class="math inline">\(4\)</span> cm beyond its rest position and released at time <span class="math inline">\(t = 0\)</span>. Its position at time <span class="math inline">\(t\)</span> is <span class="math display">\[s = f(t) = 4\cos t.\]</span> Find the velocity and acceleration at time <span class="math inline">\(t\)</span>, and use them to describe the motion.</p>
 <p><em>By hand.</em> <span class="math display">\[v = \frac{ds}{dt} = -4\sin t, \qquad a = \frac{dv}{dt} = -4\cos t.\]</span></p>
 <p><em>Interpretation.</em> - The object moves between <span class="math inline">\(s = 4\)</span> and <span class="math inline">\(s = -4\)</span>, with period <span class="math inline">\(2\pi\)</span>. - The <strong>speed</strong> <span class="math inline">\(|v| = 4|\sin t|\)</span> is largest when <span class="math inline">\(\cos t = 0\)</span>, that is, as the object passes through its rest position <span class="math inline">\(s = 0\)</span>. - <span class="math inline">\(a = -s\)</span>: the acceleration always points back toward the rest position and is largest at the ends of the motion, where the spring is stretched or compressed the most.</p>
-<div id="cell-20" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-18T23:38:37.998614Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-18T23:38:37.998556Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-18T23:38:38.044089Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-18T23:38:38.043770Z&quot;}}" data-execution_count="10">
+<div id="cell-20" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-18T23:38:37.998614Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-18T23:38:37.998556Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-18T23:38:38.044089Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-18T23:38:38.043770Z&quot;}}" data-execution_count="27">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> <span class="dv">4</span> <span class="op">*</span> sp.cos(t)</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>v <span class="op">=</span> sp.diff(s, t)</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>acc <span class="op">=</span> sp.diff(v, t)</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>check(s, <span class="op">-</span><span class="dv">4</span> <span class="op">*</span> sp.sin(t), var<span class="op">=</span>t)</span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>check(v, <span class="op">-</span><span class="dv">4</span> <span class="op">*</span> sp.cos(t), var<span class="op">=</span>t)</span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"a = -s:"</span>, sp.simplify(acc <span class="op">+</span> s) <span class="op">==</span> <span class="dv">0</span>)</span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>ts <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">2</span> <span class="op">*</span> np.pi, <span class="dv">300</span>)</span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>))</span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>ax.plot(ts, <span class="dv">4</span> <span class="op">*</span> np.cos(ts), <span class="st">"k"</span>, lw<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="vs">r"position </span><span class="dv">$</span><span class="vs">s = 4</span><span class="er">\</span><span class="vs">cos t</span><span class="dv">$</span><span class="vs">"</span>)</span>
-<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>ax.plot(ts, <span class="op">-</span><span class="dv">4</span> <span class="op">*</span> np.sin(ts), lw<span class="op">=</span><span class="fl">1.5</span>, label<span class="op">=</span><span class="vs">r"velocity </span><span class="dv">$</span><span class="vs">v = -4</span><span class="dv">\s</span><span class="vs">in t</span><span class="dv">$</span><span class="vs">"</span>)</span>
-<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>ax.plot(ts, <span class="op">-</span><span class="dv">4</span> <span class="op">*</span> np.cos(ts), <span class="st">"--"</span>, lw<span class="op">=</span><span class="fl">1.5</span>, label<span class="op">=</span><span class="vs">r"acceleration </span><span class="dv">$</span><span class="vs">a = -4</span><span class="er">\</span><span class="vs">cos t</span><span class="dv">$</span><span class="vs">"</span>)</span>
-<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>ax.axhline(<span class="dv">0</span>, color<span class="op">=</span><span class="st">"gray"</span>, lw<span class="op">=</span><span class="fl">0.5</span>)</span>
-<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>ax.set_xticks(np.arange(<span class="dv">5</span>) <span class="op">*</span> np.pi <span class="op">/</span> <span class="dv">2</span>, [<span class="st">"0"</span>, <span class="vs">r"</span><span class="dv">$</span><span class="er">\</span><span class="vs">pi/2</span><span class="dv">$</span><span class="vs">"</span>, <span class="vs">r"</span><span class="dv">$</span><span class="er">\</span><span class="vs">pi</span><span class="dv">$</span><span class="vs">"</span>, <span class="vs">r"</span><span class="dv">$</span><span class="vs">3</span><span class="er">\</span><span class="vs">pi/2</span><span class="dv">$</span><span class="vs">"</span>, <span class="vs">r"</span><span class="dv">$</span><span class="vs">2</span><span class="er">\</span><span class="vs">pi</span><span class="dv">$</span><span class="vs">"</span>])</span>
-<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"$t$"</span>)</span>
-<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>ax.legend(loc<span class="op">=</span><span class="st">"upper center"</span>, bbox_to_anchor<span class="op">=</span>(<span class="fl">0.5</span>, <span class="op">-</span><span class="fl">0.18</span>), ncol<span class="op">=</span><span class="dv">3</span>, frameon<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"A mass on a spring"</span>)</span>
-<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> f <span class="kw">in</span> [sp.sin(x), sp.cos(x), sp.tan(x), sp.csc(x), sp.sec(x), sp.cot(x)]:</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    display(Math(<span class="vs">rf"</span><span class="ch">\f</span><span class="vs">rac</span><span class="ch">{{</span><span class="vs">d</span><span class="ch">}}{{</span><span class="vs">dx</span><span class="ch">}}</span><span class="sc">{</span>sp<span class="sc">.</span>latex(f)<span class="sc">}</span><span class="vs"> = </span><span class="sc">{</span>sp<span class="sc">.</span>latex(sp.diff(f, x))<span class="sc">}</span><span class="vs">"</span>))</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>ts <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">2</span> <span class="op">*</span> np.pi, <span class="dv">300</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>))</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>ax.plot(ts, <span class="dv">4</span> <span class="op">*</span> np.cos(ts), <span class="st">"k"</span>, lw<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="vs">r"position </span><span class="dv">$</span><span class="vs">s = 4</span><span class="er">\</span><span class="vs">cos t</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>ax.plot(ts, <span class="op">-</span><span class="dv">4</span> <span class="op">*</span> np.sin(ts), lw<span class="op">=</span><span class="fl">1.5</span>, label<span class="op">=</span><span class="vs">r"velocity </span><span class="dv">$</span><span class="vs">v = -4</span><span class="dv">\s</span><span class="vs">in t</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>ax.plot(ts, <span class="op">-</span><span class="dv">4</span> <span class="op">*</span> np.cos(ts), <span class="st">"--"</span>, lw<span class="op">=</span><span class="fl">1.5</span>, label<span class="op">=</span><span class="vs">r"acceleration </span><span class="dv">$</span><span class="vs">a = -4</span><span class="er">\</span><span class="vs">cos t</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>ax.axhline(<span class="dv">0</span>, color<span class="op">=</span><span class="st">"gray"</span>, lw<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>ax.set_xticks(np.arange(<span class="dv">5</span>) <span class="op">*</span> np.pi <span class="op">/</span> <span class="dv">2</span>, [<span class="st">"0"</span>, <span class="vs">r"</span><span class="dv">$</span><span class="er">\</span><span class="vs">pi/2</span><span class="dv">$</span><span class="vs">"</span>, <span class="vs">r"</span><span class="dv">$</span><span class="er">\</span><span class="vs">pi</span><span class="dv">$</span><span class="vs">"</span>, <span class="vs">r"</span><span class="dv">$</span><span class="vs">3</span><span class="er">\</span><span class="vs">pi/2</span><span class="dv">$</span><span class="vs">"</span>, <span class="vs">r"</span><span class="dv">$</span><span class="vs">2</span><span class="er">\</span><span class="vs">pi</span><span class="dv">$</span><span class="vs">"</span>])</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"$t$"</span>)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>ax.legend(loc<span class="op">=</span><span class="st">"upper center"</span>, bbox_to_anchor<span class="op">=</span>(<span class="fl">0.5</span>, <span class="op">-</span><span class="fl">0.18</span>), ncol<span class="op">=</span><span class="dv">3</span>, frameon<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"A mass on a spring"</span>)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display cell-output-markdown">
-<p><span class="math inline">\(\displaystyle \frac{d}{dt}\left(4 \cos{\left(t \right)}\right) = - 4 \sin{\left(t \right)}\)</span></p>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Agrees with SymPy: True</code></pre>
+<p><span class="math inline">\(\displaystyle \frac{d}{dx}\sin{\left(x \right)} = \cos{\left(x \right)}\)</span></p>
 </div>
 <div class="cell-output cell-output-display cell-output-markdown">
-<p><span class="math inline">\(\displaystyle \frac{d}{dt}\left(- 4 \sin{\left(t \right)}\right) = - 4 \cos{\left(t \right)}\)</span></p>
+<p><span class="math inline">\(\displaystyle \frac{d}{dx}\cos{\left(x \right)} = - \sin{\left(x \right)}\)</span></p>
 </div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Agrees with SymPy: True
-a = -s: True</code></pre>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle \frac{d}{dx}\tan{\left(x \right)} = \tan^{2}{\left(x \right)} + 1\)</span></p>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle \frac{d}{dx}\csc{\left(x \right)} = - \cot{\left(x \right)} \csc{\left(x \right)}\)</span></p>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle \frac{d}{dx}\sec{\left(x \right)} = \tan{\left(x \right)} \sec{\left(x \right)}\)</span></p>
+</div>
+<div class="cell-output cell-output-display cell-output-markdown">
+<p><span class="math inline">\(\displaystyle \frac{d}{dx}\cot{\left(x \right)} = - \cot^{2}{\left(x \right)} - 1\)</span></p>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="derivatives_of_trigonometric_functions_files/figure-html/cell-11-output-5.png" class="img-fluid figure-img"></p>
+<p><img src="derivatives_of_trigonometric_functions_files/figure-html/cell-9-output-7.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
 <p><strong>Example 4.</strong> Find the 27th derivative of <span class="math inline">\(\cos x\)</span>.</p>
 <p><em>By hand.</em> The derivatives of <span class="math inline">\(\cos x\)</span> repeat in a cycle of four: <span class="math display">\[f(x) = \cos x,\quad f'(x) = -\sin x,\quad f''(x) = -\cos x,\quad f^{\prime\prime\prime}(x) = \sin x,\quad f^{(4)}(x) = \cos x, \;\ldots\]</span> So <span class="math inline">\(f^{(n)}(x) = \cos x\)</span> whenever <span class="math inline">\(n\)</span> is a multiple of <span class="math inline">\(4\)</span>. Since <span class="math inline">\(27 = 4\cdot 6 + 3\)</span>, <span class="math display">\[\frac{d^{27}}{dx^{27}}(\cos x) = \frac{d^{3}}{dx^{3}}(\cos x) = \sin x.\]</span></p>
-<div id="cell-22" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-18T23:38:38.045136Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-18T23:38:38.045080Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-18T23:38:38.050766Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-18T23:38:38.050460Z&quot;}}" data-execution_count="11">
+<div id="cell-22" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-18T23:38:38.045136Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-18T23:38:38.045080Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-18T23:38:38.050766Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-18T23:38:38.050460Z&quot;}}" data-execution_count="28">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">9</span>):</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    display(Math(<span class="vs">rf"f</span><span class="dv">^</span><span class="ch">{{</span><span class="kw">(</span><span class="sc">{</span>k<span class="sc">}</span><span class="kw">)</span><span class="ch">}}</span><span class="kw">(</span><span class="vs">x</span><span class="kw">)</span><span class="vs"> = </span><span class="sc">{</span>sp<span class="sc">.</span>latex(sp.diff(sp.cos(x), x, k))<span class="sc">}</span><span class="vs">"</span>))</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>display(Math(<span class="vs">rf"f</span><span class="dv">^</span><span class="ch">{{</span><span class="kw">(</span><span class="vs">27</span><span class="kw">)</span><span class="ch">}}</span><span class="kw">(</span><span class="vs">x</span><span class="kw">)</span><span class="vs"> = </span><span class="sc">{</span>sp<span class="sc">.</span>latex(sp.diff(sp.cos(x), x, <span class="dv">27</span>))<span class="sc">}</span><span class="vs">"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">9</span>):</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    display(Math(<span class="vs">rf"f</span><span class="dv">^</span><span class="ch">{{</span><span class="kw">(</span><span class="sc">{</span>k<span class="sc">}</span><span class="kw">)</span><span class="ch">}}</span><span class="kw">(</span><span class="vs">x</span><span class="kw">)</span><span class="vs"> = </span><span class="sc">{</span>sp<span class="sc">.</span>latex(sp.diff(sp.cos(x), x, k))<span class="sc">}</span><span class="vs">"</span>))</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>display(Math(<span class="vs">rf"f</span><span class="dv">^</span><span class="ch">{{</span><span class="kw">(</span><span class="vs">27</span><span class="kw">)</span><span class="ch">}}</span><span class="kw">(</span><span class="vs">x</span><span class="kw">)</span><span class="vs"> = </span><span class="sc">{</span>sp<span class="sc">.</span>latex(sp.diff(sp.cos(x), x, <span class="dv">27</span>))<span class="sc">}</span><span class="vs">"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display cell-output-markdown">
 <p><span class="math inline">\(\displaystyle f^{(0)}(x) = \cos{\left(x \right)}\)</span></p>
@@ -684,15 +634,15 @@ a = -s: True</code></pre>
 <p><strong>Note:</strong> <span class="math inline">\(\sin 7x \neq 7\sin x\)</span>, so we cannot just cancel the <span class="math inline">\(7\)</span>.</p>
 <p><strong>Example 6.</strong> Find <span class="math inline">\(\displaystyle\lim_{x\to0} x\cot x\)</span>.</p>
 <p><em>By hand.</em> Write <span class="math inline">\(\cot x = \dfrac{\cos x}{\sin x}\)</span> and divide the numerator and denominator by <span class="math inline">\(x\)</span>: <span class="math display">\[\lim_{x\to0} x\cot x = \lim_{x\to0}\frac{\cos x}{\dfrac{\sin x}{x}} = \frac{\lim_{x\to0}\cos x}{\lim_{x\to0}\dfrac{\sin x}{x}} = \frac{1}{1} = 1.\]</span></p>
-<div id="cell-24" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-18T23:38:38.052017Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-18T23:38:38.051928Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-18T23:38:38.092270Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-18T23:38:38.091933Z&quot;}}" data-execution_count="12">
+<div id="cell-24" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-18T23:38:38.052017Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-18T23:38:38.051928Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-18T23:38:38.092270Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-18T23:38:38.091933Z&quot;}}" data-execution_count="29">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> expr, by_hand <span class="kw">in</span> [(sp.sin(<span class="dv">7</span><span class="op">*</span>x) <span class="op">/</span> (<span class="dv">4</span><span class="op">*</span>x), sp.Rational(<span class="dv">7</span>, <span class="dv">4</span>)), (x <span class="op">*</span> sp.cot(x), <span class="dv">1</span>)]:</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    lim <span class="op">=</span> sp.limit(expr, x, <span class="dv">0</span>)</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    display(Math(<span class="vs">rf"</span><span class="er">\</span><span class="vs">lim_</span><span class="ch">{{</span><span class="vs">x</span><span class="ch">\t</span><span class="vs">o0</span><span class="ch">}}</span><span class="vs"> </span><span class="sc">{</span>sp<span class="sc">.</span>latex(expr)<span class="sc">}</span><span class="vs"> = </span><span class="sc">{</span>sp<span class="sc">.</span>latex(lim)<span class="sc">}</span><span class="vs">"</span>))</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Agrees with by-hand answer:"</span>, lim <span class="op">==</span> by_hand)</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    fn <span class="op">=</span> sp.lambdify(x, expr, <span class="st">"numpy"</span>)</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"  numeric:"</span>, <span class="st">", "</span>.join(<span class="ss">f"x=</span><span class="sc">{</span>xv<span class="sc">:g}</span><span class="ss">: </span><span class="sc">{</span>fn(xv)<span class="sc">:.6f}</span><span class="ss">"</span> <span class="cf">for</span> xv <span class="kw">in</span> [<span class="fl">0.1</span>, <span class="fl">0.01</span>, <span class="fl">0.001</span>]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> expr, by_hand <span class="kw">in</span> [(sp.sin(<span class="dv">7</span><span class="op">*</span>x) <span class="op">/</span> (<span class="dv">4</span><span class="op">*</span>x), sp.Rational(<span class="dv">7</span>, <span class="dv">4</span>)), (x <span class="op">*</span> sp.cot(x), <span class="dv">1</span>)]:</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    lim <span class="op">=</span> sp.limit(expr, x, <span class="dv">0</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    display(Math(<span class="vs">rf"</span><span class="er">\</span><span class="vs">lim_</span><span class="ch">{{</span><span class="vs">x</span><span class="ch">\t</span><span class="vs">o0</span><span class="ch">}}</span><span class="vs"> </span><span class="sc">{</span>sp<span class="sc">.</span>latex(expr)<span class="sc">}</span><span class="vs"> = </span><span class="sc">{</span>sp<span class="sc">.</span>latex(lim)<span class="sc">}</span><span class="vs">"</span>))</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Agrees with by-hand answer:"</span>, lim <span class="op">==</span> by_hand)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    fn <span class="op">=</span> sp.lambdify(x, expr, <span class="st">"numpy"</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"  numeric:"</span>, <span class="st">", "</span>.join(<span class="ss">f"x=</span><span class="sc">{</span>xv<span class="sc">:g}</span><span class="ss">: </span><span class="sc">{</span>fn(xv)<span class="sc">:.6f}</span><span class="ss">"</span> <span class="cf">for</span> xv <span class="kw">in</span> [<span class="fl">0.1</span>, <span class="fl">0.01</span>, <span class="fl">0.001</span>]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display cell-output-markdown">
 <p><span class="math inline">\(\displaystyle \lim_{x\to0} \frac{\sin{\left(7 x \right)}}{4 x} = \frac{7}{4}\)</span></p>
@@ -713,41 +663,48 @@ a = -s: True</code></pre>
 <section id="a-numerical-sanity-check" class="level2">
 <h2 class="anchored" data-anchor-id="a-numerical-sanity-check">7. A numerical sanity check</h2>
 <p>As in §3.2, we compare each by-hand derivative with a <strong>central difference</strong> <span class="math inline">\(\dfrac{f(x+h) - f(x-h)}{2h}\)</span> at many points. We use the interval <span class="math inline">\([0.2, 1.3]\)</span>, which avoids the vertical asymptotes of <span class="math inline">\(\tan x\)</span> and <span class="math inline">\(\sec x\)</span> at <span class="math inline">\(x = \pi/2 \approx 1.57\)</span>.</p>
-<div id="cell-26" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-18T23:38:38.093389Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-18T23:38:38.093300Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-18T23:38:38.100089Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-18T23:38:38.099632Z&quot;}}" data-execution_count="13">
+<div id="cell-26" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-18T23:38:38.093389Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-18T23:38:38.093300Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-18T23:38:38.100089Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-18T23:38:38.099632Z&quot;}}" data-execution_count="30">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> numeric_check(f, fprime, a<span class="op">=</span><span class="fl">0.2</span>, b<span class="op">=</span><span class="fl">1.3</span>, step<span class="op">=</span><span class="fl">1e-5</span>):</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    fn, dfn <span class="op">=</span> sp.lambdify(x, f, <span class="st">"numpy"</span>), sp.lambdify(x, fprime, <span class="st">"numpy"</span>)</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    xs <span class="op">=</span> np.linspace(a, b, <span class="dv">200</span>)</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    approx <span class="op">=</span> (fn(xs <span class="op">+</span> step) <span class="op">-</span> fn(xs <span class="op">-</span> step)) <span class="op">/</span> (<span class="dv">2</span> <span class="op">*</span> step)</span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    exact <span class="op">=</span> dfn(xs)</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.<span class="bu">max</span>(np.<span class="bu">abs</span>(approx <span class="op">-</span> exact)) <span class="op">/</span> np.<span class="bu">max</span>(np.<span class="bu">abs</span>(exact))</span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>tests <span class="op">=</span> {sp.latex(f): (f, df) <span class="cf">for</span> f, df <span class="kw">in</span> table}</span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>tests[<span class="vs">r"x</span><span class="dv">^</span><span class="vs">2 </span><span class="dv">\s</span><span class="vs">in x"</span>] <span class="op">=</span> (x<span class="op">**</span><span class="dv">2</span> <span class="op">*</span> sp.sin(x), x<span class="op">**</span><span class="dv">2</span> <span class="op">*</span> sp.cos(x) <span class="op">+</span> <span class="dv">2</span><span class="op">*</span>x <span class="op">*</span> sp.sin(x))</span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>tests[<span class="vs">r"</span><span class="ch">\f</span><span class="vs">rac{</span><span class="dv">\s</span><span class="vs">ec x}{1 </span><span class="op">+</span><span class="vs"> </span><span class="ch">\t</span><span class="vs">an x}"</span>] <span class="op">=</span> (sp.sec(x) <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> sp.tan(x)),</span>
-<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>                                     sp.sec(x) <span class="op">*</span> (sp.tan(x) <span class="op">-</span> <span class="dv">1</span>) <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> sp.tan(x))<span class="op">**</span><span class="dv">2</span>)</span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name, (f, fp) <span class="kw">in</span> tests.items():</span>
-<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>    rel <span class="op">=</span> numeric_check(f, fp)</span>
-<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>    display(Math(<span class="vs">rf"</span><span class="sc">{</span>name<span class="sc">}</span><span class="vs">: </span><span class="er">\</span><span class="vs">quad </span><span class="ch">\t</span><span class="vs">ext</span><span class="ch">{{</span><span class="vs">relative error</span><span class="ch">}}</span><span class="vs"> </span><span class="ch">\a</span><span class="vs">pprox </span><span class="sc">{</span>rel<span class="sc">:.1e}</span><span class="vs">"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> numeric_check(f, fprime, a<span class="op">=</span><span class="fl">0.2</span>, b<span class="op">=</span><span class="fl">1.3</span>, step<span class="op">=</span><span class="fl">1e-5</span>):</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    fn, dfn <span class="op">=</span> sp.lambdify(x, f, <span class="st">"numpy"</span>), sp.lambdify(x, fprime, <span class="st">"numpy"</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    xs <span class="op">=</span> np.linspace(a, b, <span class="dv">200</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    approx <span class="op">=</span> (fn(xs <span class="op">+</span> step) <span class="op">-</span> fn(xs <span class="op">-</span> step)) <span class="op">/</span> (<span class="dv">2</span> <span class="op">*</span> step)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    exact <span class="op">=</span> dfn(xs)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.<span class="bu">max</span>(np.<span class="bu">abs</span>(approx <span class="op">-</span> exact)) <span class="op">/</span> np.<span class="bu">max</span>(np.<span class="bu">abs</span>(exact))</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>tests <span class="op">=</span> {</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="vs">r"</span><span class="dv">\s</span><span class="vs">in x"</span>: (sp.sin(x), sp.cos(x)),</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="vs">r"</span><span class="er">\</span><span class="vs">cos x"</span>: (sp.cos(x), <span class="op">-</span>sp.sin(x)),</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="vs">r"</span><span class="ch">\t</span><span class="vs">an x"</span>: (sp.tan(x), sp.sec(x)<span class="op">**</span><span class="dv">2</span>),</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    <span class="vs">r"</span><span class="er">\</span><span class="vs">csc x"</span>: (sp.csc(x), <span class="op">-</span>sp.csc(x) <span class="op">*</span> sp.cot(x)),</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    <span class="vs">r"</span><span class="dv">\s</span><span class="vs">ec x"</span>: (sp.sec(x), sp.sec(x) <span class="op">*</span> sp.tan(x)),</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    <span class="vs">r"</span><span class="er">\</span><span class="vs">cot x"</span>: (sp.cot(x), <span class="op">-</span>sp.csc(x)<span class="op">**</span><span class="dv">2</span>),</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    <span class="vs">r"x</span><span class="dv">^</span><span class="vs">2 </span><span class="dv">\s</span><span class="vs">in x"</span>: (x<span class="op">**</span><span class="dv">2</span> <span class="op">*</span> sp.sin(x), x<span class="op">**</span><span class="dv">2</span> <span class="op">*</span> sp.cos(x) <span class="op">+</span> <span class="dv">2</span><span class="op">*</span>x <span class="op">*</span> sp.sin(x)),</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    <span class="vs">r"</span><span class="ch">\f</span><span class="vs">rac{</span><span class="dv">\s</span><span class="vs">ec x}{1 </span><span class="op">+</span><span class="vs"> </span><span class="ch">\t</span><span class="vs">an x}"</span>: (sp.sec(x) <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> sp.tan(x)),</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>                                   sp.sec(x) <span class="op">*</span> (sp.tan(x) <span class="op">-</span> <span class="dv">1</span>) <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> sp.tan(x))<span class="op">**</span><span class="dv">2</span>),</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name, (f, fp) <span class="kw">in</span> tests.items():</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>    rel <span class="op">=</span> numeric_check(f, fp)</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>    display(Math(<span class="vs">rf"</span><span class="sc">{</span>name<span class="sc">}</span><span class="vs">: </span><span class="er">\</span><span class="vs">quad </span><span class="ch">\t</span><span class="vs">ext</span><span class="ch">{{</span><span class="vs">relative error</span><span class="ch">}}</span><span class="vs"> </span><span class="ch">\a</span><span class="vs">pprox </span><span class="sc">{</span>rel<span class="sc">:.1e}</span><span class="vs">"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display cell-output-markdown">
-<p><span class="math inline">\(\displaystyle \sin{\left(x \right)}: \quad \text{relative error} \approx 2.2e-11\)</span></p>
+<p><span class="math inline">\(\displaystyle \sin x: \quad \text{relative error} \approx 2.2e-11\)</span></p>
 </div>
 <div class="cell-output cell-output-display cell-output-markdown">
-<p><span class="math inline">\(\displaystyle \cos{\left(x \right)}: \quad \text{relative error} \approx 2.3e-11\)</span></p>
+<p><span class="math inline">\(\displaystyle \cos x: \quad \text{relative error} \approx 2.3e-11\)</span></p>
 </div>
 <div class="cell-output cell-output-display cell-output-markdown">
-<p><span class="math inline">\(\displaystyle \tan{\left(x \right)}: \quad \text{relative error} \approx 1.3e-09\)</span></p>
+<p><span class="math inline">\(\displaystyle \tan x: \quad \text{relative error} \approx 1.3e-09\)</span></p>
 </div>
 <div class="cell-output cell-output-display cell-output-markdown">
-<p><span class="math inline">\(\displaystyle \csc{\left(x \right)}: \quad \text{relative error} \approx 2.5e-09\)</span></p>
+<p><span class="math inline">\(\displaystyle \csc x: \quad \text{relative error} \approx 2.5e-09\)</span></p>
 </div>
 <div class="cell-output cell-output-display cell-output-markdown">
-<p><span class="math inline">\(\displaystyle \sec{\left(x \right)}: \quad \text{relative error} \approx 1.4e-09\)</span></p>
+<p><span class="math inline">\(\displaystyle \sec x: \quad \text{relative error} \approx 1.4e-09\)</span></p>
 </div>
 <div class="cell-output cell-output-display cell-output-markdown">
-<p><span class="math inline">\(\displaystyle \cot{\left(x \right)}: \quad \text{relative error} \approx 2.5e-09\)</span></p>
+<p><span class="math inline">\(\displaystyle \cot x: \quad \text{relative error} \approx 2.5e-09\)</span></p>
 </div>
 <div class="cell-output cell-output-display cell-output-markdown">
 <p><span class="math inline">\(\displaystyle x^2 \sin x: \quad \text{relative error} \approx 3.2e-11\)</span></p>
@@ -769,32 +726,32 @@ a = -s: True</code></pre>
 <li>Find <span class="math inline">\(\displaystyle\lim_{x\to0}\frac{\sin 3x}{\sin 5x}\)</span> and <span class="math inline">\(\displaystyle\lim_{x\to0}\frac{\sin(x^2)}{x}\)</span>.</li>
 <li>Find <span class="math inline">\(\dfrac{d^{99}}{dx^{99}}(\sin x)\)</span>.</li>
 </ol>
-<div id="cell-28" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-18T23:38:38.101064Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-18T23:38:38.101004Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-18T23:38:38.130519Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-18T23:38:38.130207Z&quot;}}" data-execution_count="14">
+<div id="cell-28" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-10-18T23:38:38.101064Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-10-18T23:38:38.101004Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-10-18T23:38:38.130519Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-10-18T23:38:38.130207Z&quot;}}" data-execution_count="31">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>problems <span class="op">=</span> [</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    (<span class="dv">3</span><span class="op">*</span>sp.sin(x) <span class="op">-</span> <span class="dv">2</span><span class="op">*</span>sp.cos(x), x),</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    (sp.exp(x) <span class="op">*</span> sp.cos(x), x),</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    (sp.sin(x) <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> sp.cos(x)), x),</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    (theta <span class="op">*</span> sp.cos(theta) <span class="op">*</span> sp.sin(theta), theta),</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, (f, var) <span class="kw">in</span> <span class="bu">enumerate</span>(problems, <span class="dv">1</span>):</span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> sp.diff(f, var)</span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> sp.trigsimp(sp.simplify(df)) <span class="cf">if</span> i <span class="op">==</span> <span class="dv">3</span> <span class="cf">else</span> df</span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>    display(Math(<span class="vs">rf"</span><span class="ch">\t</span><span class="vs">ext</span><span class="ch">{{</span><span class="sc">{</span>i<span class="sc">}</span><span class="dv">.</span><span class="ch">}}</span><span class="er">\</span><span class="vs">quad </span><span class="ch">\f</span><span class="vs">rac</span><span class="ch">{{</span><span class="vs">d</span><span class="ch">}}{{</span><span class="vs">d</span><span class="sc">{</span>sp<span class="sc">.</span>latex(var)<span class="sc">}</span><span class="ch">}}</span><span class="er">\</span><span class="vs">left</span><span class="kw">(</span><span class="sc">{</span>sp<span class="sc">.</span>latex(f)<span class="sc">}</span><span class="ch">\r</span><span class="vs">ight</span><span class="kw">)</span><span class="vs"> = </span><span class="sc">{</span>sp<span class="sc">.</span>latex(df)<span class="sc">}</span><span class="vs">"</span>))</span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. tangent line</span></span>
-<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> sp.sec(x)</span>
-<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> sp.diff(y, x).subs(x, sp.pi <span class="op">/</span> <span class="dv">3</span>)</span>
-<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>display(Math(<span class="vs">rf"</span><span class="ch">\t</span><span class="vs">ext</span><span class="ch">{{</span><span class="vs">5</span><span class="dv">.</span><span class="ch">}}</span><span class="er">\</span><span class="vs">quad y = 2 </span><span class="op">+</span><span class="vs"> </span><span class="sc">{</span>sp<span class="sc">.</span>latex(m)<span class="sc">}</span><span class="er">\</span><span class="vs">left</span><span class="kw">(</span><span class="vs">x - </span><span class="ch">\f</span><span class="vs">rac</span><span class="ch">{{</span><span class="er">\</span><span class="vs">pi</span><span class="ch">}}{{</span><span class="op">3</span><span class="ch">}}\r</span><span class="vs">ight</span><span class="kw">)</span><span class="vs">"</span>))</span>
-<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 6. limits</span></span>
-<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>l1 <span class="op">=</span> sp.limit(sp.sin(<span class="dv">3</span><span class="op">*</span>x) <span class="op">/</span> sp.sin(<span class="dv">5</span><span class="op">*</span>x), x, <span class="dv">0</span>)</span>
-<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>l2 <span class="op">=</span> sp.limit(sp.sin(x<span class="op">**</span><span class="dv">2</span>) <span class="op">/</span> x, x, <span class="dv">0</span>)</span>
-<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>display(Math(<span class="vs">rf"</span><span class="ch">\t</span><span class="vs">ext</span><span class="ch">{{</span><span class="vs">6</span><span class="dv">.</span><span class="ch">}}</span><span class="er">\</span><span class="vs">quad </span><span class="sc">{</span>sp<span class="sc">.</span>latex(l1)<span class="sc">}</span><span class="vs">, </span><span class="er">\</span><span class="vs">qquad </span><span class="sc">{</span>sp<span class="sc">.</span>latex(l2)<span class="sc">}</span><span class="vs">"</span>))</span>
-<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a><span class="co"># 7. 99 = 4·24 + 3</span></span>
-<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>display(Math(<span class="vs">rf"</span><span class="ch">\t</span><span class="vs">ext</span><span class="ch">{{</span><span class="vs">7</span><span class="dv">.</span><span class="ch">}}</span><span class="er">\</span><span class="vs">quad </span><span class="sc">{</span>sp<span class="sc">.</span>latex(sp.diff(sp.sin(x), x, <span class="dv">99</span>))<span class="sc">}</span><span class="vs">"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>problems <span class="op">=</span> [</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    (<span class="dv">3</span><span class="op">*</span>sp.sin(x) <span class="op">-</span> <span class="dv">2</span><span class="op">*</span>sp.cos(x), x),</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    (sp.exp(x) <span class="op">*</span> sp.cos(x), x),</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    (sp.sin(x) <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> sp.cos(x)), x),</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    (theta <span class="op">*</span> sp.cos(theta) <span class="op">*</span> sp.sin(theta), theta),</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, (f, var) <span class="kw">in</span> <span class="bu">enumerate</span>(problems, <span class="dv">1</span>):</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> sp.diff(f, var)</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> sp.trigsimp(sp.simplify(df)) <span class="cf">if</span> i <span class="op">==</span> <span class="dv">3</span> <span class="cf">else</span> df</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    display(Math(<span class="vs">rf"</span><span class="ch">\t</span><span class="vs">ext</span><span class="ch">{{</span><span class="sc">{</span>i<span class="sc">}</span><span class="dv">.</span><span class="ch">}}</span><span class="er">\</span><span class="vs">quad </span><span class="ch">\f</span><span class="vs">rac</span><span class="ch">{{</span><span class="vs">d</span><span class="ch">}}{{</span><span class="vs">d</span><span class="sc">{</span>sp<span class="sc">.</span>latex(var)<span class="sc">}</span><span class="ch">}}</span><span class="er">\</span><span class="vs">left</span><span class="kw">(</span><span class="sc">{</span>sp<span class="sc">.</span>latex(f)<span class="sc">}</span><span class="ch">\r</span><span class="vs">ight</span><span class="kw">)</span><span class="vs"> = </span><span class="sc">{</span>sp<span class="sc">.</span>latex(df)<span class="sc">}</span><span class="vs">"</span>))</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. tangent line</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> sp.sec(x)</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> sp.diff(y, x).subs(x, sp.pi <span class="op">/</span> <span class="dv">3</span>)</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>display(Math(<span class="vs">rf"</span><span class="ch">\t</span><span class="vs">ext</span><span class="ch">{{</span><span class="vs">5</span><span class="dv">.</span><span class="ch">}}</span><span class="er">\</span><span class="vs">quad y = 2 </span><span class="op">+</span><span class="vs"> </span><span class="sc">{</span>sp<span class="sc">.</span>latex(m)<span class="sc">}</span><span class="er">\</span><span class="vs">left</span><span class="kw">(</span><span class="vs">x - </span><span class="ch">\f</span><span class="vs">rac</span><span class="ch">{{</span><span class="er">\</span><span class="vs">pi</span><span class="ch">}}{{</span><span class="op">3</span><span class="ch">}}\r</span><span class="vs">ight</span><span class="kw">)</span><span class="vs">"</span>))</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 6. limits</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>l1 <span class="op">=</span> sp.limit(sp.sin(<span class="dv">3</span><span class="op">*</span>x) <span class="op">/</span> sp.sin(<span class="dv">5</span><span class="op">*</span>x), x, <span class="dv">0</span>)</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>l2 <span class="op">=</span> sp.limit(sp.sin(x<span class="op">**</span><span class="dv">2</span>) <span class="op">/</span> x, x, <span class="dv">0</span>)</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>display(Math(<span class="vs">rf"</span><span class="ch">\t</span><span class="vs">ext</span><span class="ch">{{</span><span class="vs">6</span><span class="dv">.</span><span class="ch">}}</span><span class="er">\</span><span class="vs">quad </span><span class="sc">{</span>sp<span class="sc">.</span>latex(l1)<span class="sc">}</span><span class="vs">, </span><span class="er">\</span><span class="vs">qquad </span><span class="sc">{</span>sp<span class="sc">.</span>latex(l2)<span class="sc">}</span><span class="vs">"</span>))</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a><span class="co"># 7. 99 = 4·24 + 3</span></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>display(Math(<span class="vs">rf"</span><span class="ch">\t</span><span class="vs">ext</span><span class="ch">{{</span><span class="vs">7</span><span class="dv">.</span><span class="ch">}}</span><span class="er">\</span><span class="vs">quad </span><span class="sc">{</span>sp<span class="sc">.</span>latex(sp.diff(sp.sin(x), x, <span class="dv">99</span>))<span class="sc">}</span><span class="vs">"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display cell-output-markdown">
 <p><span class="math inline">\(\displaystyle \text{1.}\quad \frac{d}{dx}\left(3 \sin{\left(x \right)} - 2 \cos{\left(x \right)}\right) = 2 \sin{\left(x \right)} + 3 \cos{\left(x \right)}\)</span></p>
