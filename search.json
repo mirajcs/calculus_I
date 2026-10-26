@@ -1,5 +1,300 @@
 [
   {
+    "objectID": "chain_rule.html",
+    "href": "chain_rule.html",
+    "title": "Lecture Notes: The Chain Rule",
+    "section": "",
+    "text": "Stewart, Calculus, 9th ed., §3.4\nLearning objectives. By the end of this lecture you should be able to: 1. Recognize a composite function \\(F = f\\circ g\\) and identify its outer function \\(f\\) and inner function \\(g\\). 2. State the Chain Rule in both prime and Leibniz notation, and interpret it as multiplying rates of change. 3. Use the Power Rule combined with the Chain Rule to differentiate \\([g(x)]^n\\). 4. Differentiate \\(b^x\\) for any base \\(b &gt; 0\\). 5. Apply the Chain Rule several times to longer chains, and together with the Product and Quotient Rules. 6. Check every answer symbolically with SymPy and numerically with NumPy.\nCode\nimport numpy as np\nimport sympy as sp\nimport matplotlib.pyplot as plt\nfrom IPython.display import Math, display\n\nsp.init_printing()\nx, t, u, theta = sp.symbols(\"x t u theta\")",
+    "crumbs": [
+      "Chapter 3: Differentiation Rules",
+      "3.4 The Chain Rule"
+    ]
+  },
+  {
+    "objectID": "chain_rule.html#where-we-are",
+    "href": "chain_rule.html#where-we-are",
+    "title": "Lecture Notes: The Chain Rule",
+    "section": "1. Where we are",
+    "text": "1. Where we are\nFrom §3.1–3.3 we can differentiate:\n\n\n\nFunction\nDerivative\n\n\n\n\n\\(x^n\\)\n\\(n x^{n-1}\\)\n\n\n\\(e^x\\)\n\\(e^x\\)\n\n\n\\(\\sin x,\\ \\cos x,\\ \\tan x\\)\n\\(\\cos x,\\ -\\sin x,\\ \\sec^2 x\\)\n\n\n\\(f\\,g\\)\n\\(f g' + g f'\\)\n\n\n\\(\\dfrac{f}{g}\\)\n\\(\\dfrac{g f' - f g'}{g^2}\\)\n\n\n\nNone of these rules can handle \\[F(x) = \\sqrt{x^2 + 1}.\\] \\(F\\) is a composite function: if \\(y = f(u) = \\sqrt u\\) and \\(u = g(x) = x^2 + 1\\), then \\(y = F(x) = f(g(x))\\), so \\(F = f\\circ g\\). We call \\(f\\) the outer function and \\(g\\) the inner function. We already know how to differentiate \\(f\\) and \\(g\\). The Chain Rule tells us how to put those derivatives together.\nAs before, the helper below compares a derivative found by hand with SymPy’s answer.\n\n\nCode\ndef check(f, by_hand, var=x):\n    \"\"\"Display d/dvar f = by_hand and confirm it agrees with SymPy.\"\"\"\n    ok = sp.simplify(sp.diff(f, var) - by_hand) == 0\n    display(Math(rf\"\\frac{{d}}{{d{sp.latex(var)}}}\\left({sp.latex(f)}\\right) = {sp.latex(by_hand)}\"))\n    print(\"Agrees with SymPy:\", ok)",
+    "crumbs": [
+      "Chapter 3: Differentiation Rules",
+      "3.4 The Chain Rule"
+    ]
+  },
+  {
+    "objectID": "chain_rule.html#the-chain-rule",
+    "href": "chain_rule.html#the-chain-rule",
+    "title": "Lecture Notes: The Chain Rule",
+    "section": "2. The Chain Rule",
+    "text": "2. The Chain Rule\nMotivation: rates multiply. Suppose \\(u\\) changes twice as fast as \\(x\\), and \\(y\\) changes three times as fast as \\(u\\). Then \\(y\\) changes \\(3 \\cdot 2 = 6\\) times as fast as \\(x\\): \\[\\frac{du}{dx} = 2,\\quad \\frac{dy}{du} = 3 \\quad\\Longrightarrow\\quad \\frac{dy}{dx} = \\frac{dy}{du}\\cdot\\frac{du}{dx} = 6.\\] Think of three gears: if gear \\(A\\) turns \\(x\\) times, gear \\(B\\) turns \\(u\\) times, and gear \\(C\\) turns \\(y\\) times, the gear ratios multiply.\nThe Chain Rule. If \\(g\\) is differentiable at \\(x\\) and \\(f\\) is differentiable at \\(g(x)\\), then \\(F = f\\circ g\\) is differentiable at \\(x\\) and \\[\\boxed{F'(x) = f'\\big(g(x)\\big)\\cdot g'(x)}\\] In Leibniz notation, if \\(y = f(u)\\) and \\(u = g(x)\\) are both differentiable, then \\[\\boxed{\\frac{dy}{dx} = \\frac{dy}{du}\\,\\frac{du}{dx}}\\] In words: the derivative of the outer function, evaluated at the inner function, times the derivative of the inner function.\nWarning: in \\(f'(g(x))\\) the inner function is left unchanged inside \\(f'\\). Differentiate the outside first, keep the inside as it is, then multiply by the derivative of the inside.\nLeibniz notation is a good memory aid, but \\(du\\) does not really “cancel.” \\(\\dfrac{dy}{du}\\) is not a fraction. The rule still has to be proved (see §7).\nWe check the rule for general functions \\(f\\) and \\(g\\):\n\n\nCode\nf, g = sp.Function(\"f\"), sp.Function(\"g\")\nlhs = sp.diff(f(g(x)), x)\nrhs = f(u).diff(u).subs(u, g(x)) * sp.diff(g(x), x)\ndisplay(Math(rf\"\\frac{{d}}{{dx}}f(g(x)) = {sp.latex(lhs)}\"))\nprint(\"Chain rule holds:\", sp.simplify(lhs - rhs) == 0)\n\n\n\\(\\displaystyle \\frac{d}{dx}f(g(x)) = \\frac{d}{d g{\\left(x \\right)}} f{\\left(g{\\left(x \\right)} \\right)} \\frac{d}{d x} g{\\left(x \\right)}\\)\n\n\nChain rule holds: True\n\n\nExample 1. Find \\(F'(x)\\) if \\(F(x) = \\sqrt{x^2 + 1}\\).\nBy hand. The outer function is \\(f(u) = \\sqrt u = u^{1/2}\\), so \\(f'(u) = \\dfrac{1}{2\\sqrt u}\\). The inner function is \\(g(x) = x^2 + 1\\), so \\(g'(x) = 2x\\). \\[F'(x) = f'\\big(g(x)\\big)\\cdot g'(x) = \\frac{1}{2\\sqrt{x^2+1}}\\cdot 2x = \\frac{x}{\\sqrt{x^2+1}}.\\]\nIn Leibniz notation. Let \\(u = x^2 + 1\\) and \\(y = \\sqrt u\\). Then \\[\\frac{dy}{dx} = \\frac{dy}{du}\\,\\frac{du}{dx} = \\frac{1}{2\\sqrt u}\\cdot 2x = \\frac{x}{\\sqrt{x^2+1}}.\\]\n\n\nCode\ncheck(sp.sqrt(x**2 + 1), x / sp.sqrt(x**2 + 1))\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(\\sqrt{x^{2} + 1}\\right) = \\frac{x}{\\sqrt{x^{2} + 1}}\\)\n\n\nAgrees with SymPy: True\n\n\nExample 2. Differentiate (a) \\(y = \\sin(x^2)\\) and (b) \\(y = \\sin^2 x\\).\nThese look alike but are different compositions.\n(a) The outer function is \\(\\sin\\), the inner function is \\(x^2\\): \\[\\frac{dy}{dx} = \\underbrace{\\cos(x^2)}_{\\text{outer}'\\text{ at inner}}\\cdot\\underbrace{2x}_{\\text{inner}'} = 2x\\cos(x^2).\\]\n(b) \\(\\sin^2 x\\) means \\((\\sin x)^2\\). The outer function is squaring, the inner function is \\(\\sin\\): \\[\\frac{dy}{dx} = 2(\\sin x)\\cdot\\cos x = 2\\sin x\\cos x = \\sin 2x.\\]\n\n\nCode\ncheck(sp.sin(x**2), 2*x * sp.cos(x**2))\ncheck(sp.sin(x)**2, sp.sin(2*x))\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(\\sin{\\left(x^{2} \\right)}\\right) = 2 x \\cos{\\left(x^{2} \\right)}\\)\n\n\nAgrees with SymPy: True\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(\\sin^{2}{\\left(x \\right)}\\right) = \\sin{\\left(2 x \\right)}\\)\n\n\nAgrees with SymPy: True\n\n\nThe plot shows why the factor \\(2x\\) appears in (a). As \\(|x|\\) grows, \\(x^2\\) grows faster and faster, so \\(\\sin(x^2)\\) oscillates faster and faster. Its slopes get steeper, and the derivative \\(2x\\cos(x^2)\\) has a growing envelope \\(\\pm 2x\\).\n\n\nCode\nxs = np.linspace(0, 3.5, 600)\nslopes = np.gradient(np.sin(xs**2), xs)  # numerical estimate of the slope\n\nfig, ax = plt.subplots(figsize=(8, 4))\nax.plot(xs, np.sin(xs**2), \"k\", lw=2, label=r\"$y = \\sin(x^2)$\")\nax.plot(xs, slopes, lw=4, alpha=0.4, label=r\"estimated slope\")\nax.plot(xs, 2 * xs * np.cos(xs**2), \"--\", lw=1.5, label=r\"$y = 2x\\cos(x^2)$\")\nax.plot(xs, 2 * xs, \":\", color=\"gray\", lw=1)\nax.plot(xs, -2 * xs, \":\", color=\"gray\", lw=1)\nax.axhline(0, color=\"gray\", lw=0.5)\nax.legend(loc=\"upper center\", bbox_to_anchor=(0.5, -0.1), ncol=3, frameon=False)\nax.set_title(r\"The inner derivative $2x$ scales the slope of $\\sin(x^2)$\")\nplt.show()",
+    "crumbs": [
+      "Chapter 3: Differentiation Rules",
+      "3.4 The Chain Rule"
+    ]
+  },
+  {
+    "objectID": "chain_rule.html#the-power-rule-combined-with-the-chain-rule",
+    "href": "chain_rule.html#the-power-rule-combined-with-the-chain-rule",
+    "title": "Lecture Notes: The Chain Rule",
+    "section": "3. The Power Rule combined with the Chain Rule",
+    "text": "3. The Power Rule combined with the Chain Rule\nWhen the outer function is a power, \\(y = u^n\\) with \\(u = g(x)\\), the Chain Rule gives: \\[\\boxed{\\frac{d}{dx}\\big[g(x)\\big]^n = n\\big[g(x)\\big]^{n-1}\\,g'(x)}\n\\qquad\\text{or}\\qquad\n\\frac{d}{dx}\\left(u^n\\right) = n u^{n-1}\\,\\frac{du}{dx}.\\] The ordinary Power Rule is the case \\(g(x) = x\\), where \\(g'(x) = 1\\).\nExample 3. Differentiate \\(y = (x^3 - 1)^{100}\\).\nBy hand. Do not expand this. With \\(u = x^3 - 1\\): \\[\\frac{dy}{dx} = 100(x^3 - 1)^{99}\\cdot 3x^2 = 300x^2(x^3-1)^{99}.\\]\n\n\nCode\ncheck((x**3 - 1)**100, 300 * x**2 * (x**3 - 1)**99)\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(\\left(x^{3} - 1\\right)^{100}\\right) = 300 x^{2} \\left(x^{3} - 1\\right)^{99}\\)\n\n\nAgrees with SymPy: True\n\n\nExample 4. Find \\(f'(x)\\) if \\(f(x) = \\dfrac{1}{\\sqrt[3]{x^2 + x + 1}}\\).\nBy hand. Rewrite as a power first: \\(f(x) = (x^2 + x + 1)^{-1/3}\\). Then \\[f'(x) = -\\frac13 (x^2 + x + 1)^{-4/3}\\,(2x + 1) = -\\frac{2x+1}{3(x^2+x+1)^{4/3}}.\\] Rewriting as a power avoids the Quotient Rule.\n\n\nCode\ncheck(1 / sp.cbrt(x**2 + x + 1), -(2*x + 1) / (3 * (x**2 + x + 1)**sp.Rational(4, 3)))\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(\\frac{1}{\\sqrt[3]{x^{2} + x + 1}}\\right) = \\frac{- 2 x - 1}{3 \\left(x^{2} + x + 1\\right)^{\\frac{4}{3}}}\\)\n\n\nAgrees with SymPy: True\n\n\nExample 5. Find the derivative of \\(g(t) = \\left(\\dfrac{t - 2}{2t + 1}\\right)^9\\).\nBy hand. Power Rule + Chain Rule on the outside, Quotient Rule on the inside: \\[g'(t) = 9\\left(\\frac{t-2}{2t+1}\\right)^8 \\cdot \\frac{(2t+1)\\cdot 1 - (t-2)\\cdot 2}{(2t+1)^2}\n= 9\\left(\\frac{t-2}{2t+1}\\right)^8 \\cdot \\frac{5}{(2t+1)^2}\n= \\frac{45(t-2)^8}{(2t+1)^{10}}.\\]\n\n\nCode\ncheck(((t - 2) / (2*t + 1))**9, 45 * (t - 2)**8 / (2*t + 1)**10, var=t)\n\n\n\\(\\displaystyle \\frac{d}{dt}\\left(\\frac{\\left(t - 2\\right)^{9}}{\\left(2 t + 1\\right)^{9}}\\right) = \\frac{45 \\left(t - 2\\right)^{8}}{\\left(2 t + 1\\right)^{10}}\\)\n\n\nAgrees with SymPy: True\n\n\nExample 6. Differentiate \\(y = (2x + 1)^5 (x^3 - x + 1)^4\\).\nBy hand. The Product Rule on the outside, the Chain Rule for each factor: \\[\\begin{aligned}\ny' &= (2x+1)^5 \\cdot 4(x^3 - x + 1)^3(3x^2 - 1) + (x^3 - x + 1)^4\\cdot 5(2x+1)^4\\cdot 2 \\\\\n&= 2(2x+1)^4(x^3-x+1)^3\\big[\\,2(2x+1)(3x^2-1) + 5(x^3-x+1)\\,\\big] \\\\\n&= 2(2x+1)^4(x^3-x+1)^3\\,(17x^3 + 6x^2 - 9x + 3).\n\\end{aligned}\\] Factoring out the common powers \\((2x+1)^4(x^3-x+1)^3\\) keeps the answer readable.\n\n\nCode\ncheck((2*x + 1)**5 * (x**3 - x + 1)**4,\n      2 * (2*x + 1)**4 * (x**3 - x + 1)**3 * (17*x**3 + 6*x**2 - 9*x + 3))\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(\\left(2 x + 1\\right)^{5} \\left(x^{3} - x + 1\\right)^{4}\\right) = 2 \\left(2 x + 1\\right)^{4} \\left(x^{3} - x + 1\\right)^{3} \\left(17 x^{3} + 6 x^{2} - 9 x + 3\\right)\\)\n\n\nAgrees with SymPy: True",
+    "crumbs": [
+      "Chapter 3: Differentiation Rules",
+      "3.4 The Chain Rule"
+    ]
+  },
+  {
+    "objectID": "chain_rule.html#exponential-functions",
+    "href": "chain_rule.html#exponential-functions",
+    "title": "Lecture Notes: The Chain Rule",
+    "section": "4. Exponential functions",
+    "text": "4. Exponential functions\nExample 7. Differentiate \\(y = e^{\\sin x}\\).\nBy hand. The outer function is \\(e^u\\) (its own derivative), the inner function is \\(u = \\sin x\\): \\[\\frac{dy}{dx} = e^{\\sin x}\\cdot\\cos x.\\] In general, \\(\\dfrac{d}{dx}\\,e^{g(x)} = e^{g(x)}\\,g'(x)\\).\n\n\nCode\ncheck(sp.exp(sp.sin(x)), sp.exp(sp.sin(x)) * sp.cos(x))\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(e^{\\sin{\\left(x \\right)}}\\right) = e^{\\sin{\\left(x \\right)}} \\cos{\\left(x \\right)}\\)\n\n\nAgrees with SymPy: True\n\n\nDerivative of \\(b^x\\). For any base \\(b &gt; 0\\), write \\(b = e^{\\ln b}\\), so \\(b^x = \\left(e^{\\ln b}\\right)^x = e^{(\\ln b)x}\\). The Chain Rule with inner function \\((\\ln b)\\,x\\) gives \\[\\frac{d}{dx}\\left(b^x\\right) = e^{(\\ln b)x}\\cdot\\ln b = b^x \\ln b.\\] \\[\\boxed{\\frac{d}{dx}\\left(b^x\\right) = b^x \\ln b}\\] When \\(b = e\\), \\(\\ln e = 1\\) and we recover \\(\\dfrac{d}{dx}e^x = e^x\\). This is why \\(e\\) is the “natural” base: it is the only base with no extra constant.\nExample 8. \\(\\dfrac{d}{dx}\\left(2^x\\right) = 2^x\\ln 2 \\approx (0.693)\\,2^x\\). Compare §3.1, where we estimated \\(\\lim_{h\\to0}\\dfrac{2^h - 1}{h} \\approx 0.69\\).\n\n\nCode\nb = sp.symbols(\"b\", positive=True)\ncheck(b**x, b**x * sp.log(b))\ncheck(2**x, 2**x * sp.log(2))\nprint(\"ln 2 ≈\", float(sp.log(2)))\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(b^{x}\\right) = b^{x} \\log{\\left(b \\right)}\\)\n\n\nAgrees with SymPy: True\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(2^{x}\\right) = 2^{x} \\log{\\left(2 \\right)}\\)\n\n\nAgrees with SymPy: True\nln 2 ≈ 0.6931471805599453",
+    "crumbs": [
+      "Chapter 3: Differentiation Rules",
+      "3.4 The Chain Rule"
+    ]
+  },
+  {
+    "objectID": "chain_rule.html#longer-chains",
+    "href": "chain_rule.html#longer-chains",
+    "title": "Lecture Notes: The Chain Rule",
+    "section": "5. Longer chains",
+    "text": "5. Longer chains\nThe Chain Rule extends to compositions of three or more functions. If \\(y = f(u)\\), \\(u = g(v)\\), \\(v = h(x)\\), then \\[\\frac{dy}{dx} = \\frac{dy}{du}\\,\\frac{du}{dv}\\,\\frac{dv}{dx},\n\\qquad\\text{i.e.}\\qquad\n\\frac{d}{dx} f\\Big(g\\big(h(x)\\big)\\Big) = f'\\Big(g\\big(h(x)\\big)\\Big)\\cdot g'\\big(h(x)\\big)\\cdot h'(x).\\] Work from the outside in, one layer at a time.\nExample 9. If \\(f(x) = \\sin(\\cos(\\tan x))\\), then \\[\\begin{aligned}\nf'(x) &= \\cos(\\cos(\\tan x))\\cdot\\frac{d}{dx}\\cos(\\tan x) \\\\\n&= \\cos(\\cos(\\tan x))\\cdot\\big[-\\sin(\\tan x)\\big]\\cdot\\frac{d}{dx}\\tan x \\\\\n&= -\\cos(\\cos(\\tan x))\\,\\sin(\\tan x)\\,\\sec^2 x.\n\\end{aligned}\\]\n\n\nCode\ncheck(sp.sin(sp.cos(sp.tan(x))),\n      -sp.cos(sp.cos(sp.tan(x))) * sp.sin(sp.tan(x)) * sp.sec(x)**2)\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(\\sin{\\left(\\cos{\\left(\\tan{\\left(x \\right)} \\right)} \\right)}\\right) = - \\sin{\\left(\\tan{\\left(x \\right)} \\right)} \\cos{\\left(\\cos{\\left(\\tan{\\left(x \\right)} \\right)} \\right)} \\sec^{2}{\\left(x \\right)}\\)\n\n\nAgrees with SymPy: True\n\n\nExample 10. Differentiate \\(y = e^{\\sec 3\\theta}\\).\nBy hand. Three layers: \\(e^{(\\cdot)}\\), then \\(\\sec(\\cdot)\\), then \\(3\\theta\\). \\[\\frac{dy}{d\\theta} = e^{\\sec 3\\theta}\\cdot\\frac{d}{d\\theta}(\\sec 3\\theta)\n= e^{\\sec 3\\theta}\\cdot\\sec 3\\theta\\tan 3\\theta\\cdot\\frac{d}{d\\theta}(3\\theta)\n= 3\\,e^{\\sec 3\\theta}\\sec 3\\theta\\tan 3\\theta.\\]\n\n\nCode\ncheck(sp.exp(sp.sec(3*theta)),\n      3 * sp.exp(sp.sec(3*theta)) * sp.sec(3*theta) * sp.tan(3*theta), var=theta)\n\n\n\\(\\displaystyle \\frac{d}{d\\theta}\\left(e^{\\sec{\\left(3 \\theta \\right)}}\\right) = 3 e^{\\sec{\\left(3 \\theta \\right)}} \\tan{\\left(3 \\theta \\right)} \\sec{\\left(3 \\theta \\right)}\\)\n\n\nAgrees with SymPy: True\n\n\nExample 11 (values from a table). Suppose \\(h(x) = f(g(x))\\) with \\(g(1) = 4\\), \\(g'(1) = 3\\), and \\(f'(4) = 5\\). Then \\[h'(1) = f'\\big(g(1)\\big)\\cdot g'(1) = f'(4)\\cdot 3 = 15.\\] Note that we need \\(f'\\) at \\(g(1) = 4\\), not at \\(1\\).\n\n\nCode\n# h'(1) depends only on g(1), g'(1) and f'(4), so any f and g with those values work,\n# e.g. the lines g(x) = 4 + 3(x - 1) and f(u) = 5u.\ng_line = 4 + 3 * (x - 1)\nf_line = lambda w: 5 * w\nprint(\"h'(1) =\", sp.diff(f_line(g_line), x).subs(x, 1))\n\n\nh'(1) = 15",
+    "crumbs": [
+      "Chapter 3: Differentiation Rules",
+      "3.4 The Chain Rule"
+    ]
+  },
+  {
+    "objectID": "chain_rule.html#a-numerical-sanity-check",
+    "href": "chain_rule.html#a-numerical-sanity-check",
+    "title": "Lecture Notes: The Chain Rule",
+    "section": "6. A numerical sanity check",
+    "text": "6. A numerical sanity check\nAs in earlier sections, we compare each by-hand derivative with a central difference \\(\\dfrac{f(x+h) - f(x-h)}{2h}\\) at many points.\n\n\nCode\ndef numeric_check(f, fprime, a=0.2, b=1.2, step=1e-6):\n    fn, dfn = sp.lambdify(x, f, \"numpy\"), sp.lambdify(x, fprime, \"numpy\")\n    xs = np.linspace(a, b, 200)\n    approx = (fn(xs + step) - fn(xs - step)) / (2 * step)\n    exact = dfn(xs)\n    return np.max(np.abs(approx - exact)) / np.max(np.abs(exact))\n\ntests = {\n    r\"\\sqrt{x^2+1}\": (sp.sqrt(x**2 + 1), x / sp.sqrt(x**2 + 1)),\n    r\"\\sin(x^2)\": (sp.sin(x**2), 2*x * sp.cos(x**2)),\n    r\"(x^3-1)^{100}\": ((x**3 - 1)**100, 300 * x**2 * (x**3 - 1)**99),\n    r\"(2x+1)^5(x^3-x+1)^4\": ((2*x + 1)**5 * (x**3 - x + 1)**4,\n                             2 * (2*x + 1)**4 * (x**3 - x + 1)**3 * (17*x**3 + 6*x**2 - 9*x + 3)),\n    r\"e^{\\sin x}\": (sp.exp(sp.sin(x)), sp.exp(sp.sin(x)) * sp.cos(x)),\n    r\"2^x\": (2**x, 2**x * sp.log(2)),\n    r\"\\sin(\\cos(\\tan x))\": (sp.sin(sp.cos(sp.tan(x))),\n                            -sp.cos(sp.cos(sp.tan(x))) * sp.sin(sp.tan(x)) * sp.sec(x)**2),\n}\nfor name, (f, fp) in tests.items():\n    rel = numeric_check(f, fp)\n    display(Math(rf\"{name}: \\quad \\text{{relative error}} \\approx {rel:.1e}\"))\n\n\n\\(\\displaystyle \\sqrt{x^2+1}: \\quad \\text{relative error} \\approx 2.0e-10\\)\n\n\n\\(\\displaystyle \\sin(x^2): \\quad \\text{relative error} \\approx 1.2e-10\\)\n\n\n\\(\\displaystyle (x^3-1)^{100}: \\quad \\text{relative error} \\approx 2.9e-10\\)\n\n\n\\(\\displaystyle (2x+1)^5(x^3-x+1)^4: \\quad \\text{relative error} \\approx 6.1e-11\\)\n\n\n\\(\\displaystyle e^{\\sin x}: \\quad \\text{relative error} \\approx 2.5e-10\\)\n\n\n\\(\\displaystyle 2^x: \\quad \\text{relative error} \\approx 1.8e-10\\)\n\n\n\\(\\displaystyle \\sin(\\cos(\\tan x)): \\quad \\text{relative error} \\approx 1.3e-10\\)",
+    "crumbs": [
+      "Chapter 3: Differentiation Rules",
+      "3.4 The Chain Rule"
+    ]
+  },
+  {
+    "objectID": "chain_rule.html#why-the-chain-rule-is-true",
+    "href": "chain_rule.html#why-the-chain-rule-is-true",
+    "title": "Lecture Notes: The Chain Rule",
+    "section": "7. Why the Chain Rule is true",
+    "text": "7. Why the Chain Rule is true\nA first attempt. Let \\(\\Delta u = g(x + \\Delta x) - g(x)\\) and \\(\\Delta y = f(u + \\Delta u) - f(u)\\). It is tempting to write \\[\\frac{\\Delta y}{\\Delta x} = \\frac{\\Delta y}{\\Delta u}\\cdot\\frac{\\Delta u}{\\Delta x}\\] and let \\(\\Delta x \\to 0\\). Since \\(g\\) is continuous, \\(\\Delta u \\to 0\\), so the two factors go to \\(f'(u)\\) and \\(g'(x)\\). The problem: \\(\\Delta u\\) may equal \\(0\\) for \\(\\Delta x \\neq 0\\) (for example, when \\(g\\) is constant near \\(x\\)), and then we divided by zero.\nA correct proof. Since \\(g\\) is differentiable at \\(a\\), we can write \\[\\Delta u = g'(a)\\,\\Delta x + \\varepsilon_1\\,\\Delta x, \\qquad \\text{where } \\varepsilon_1 \\to 0 \\text{ as } \\Delta x \\to 0.\\] Similarly, with \\(b = g(a)\\), since \\(f\\) is differentiable at \\(b\\), \\[\\Delta y = f'(b)\\,\\Delta u + \\varepsilon_2\\,\\Delta u, \\qquad \\text{where } \\varepsilon_2 \\to 0 \\text{ as } \\Delta u \\to 0\\] (define \\(\\varepsilon_2 = 0\\) when \\(\\Delta u = 0\\), so this holds even then). Substituting the first equation into the second, \\[\\Delta y = \\big[f'(b) + \\varepsilon_2\\big]\\big[g'(a) + \\varepsilon_1\\big]\\Delta x\n\\quad\\Longrightarrow\\quad\n\\frac{\\Delta y}{\\Delta x} = \\big[f'(b) + \\varepsilon_2\\big]\\big[g'(a) + \\varepsilon_1\\big].\\] No division by \\(\\Delta u\\) is needed. As \\(\\Delta x \\to 0\\), \\(\\Delta u \\to 0\\), so \\(\\varepsilon_1 \\to 0\\) and \\(\\varepsilon_2 \\to 0\\). Therefore \\[\\frac{dy}{dx} = \\lim_{\\Delta x\\to0}\\frac{\\Delta y}{\\Delta x} = f'(b)\\,g'(a) = f'\\big(g(a)\\big)\\,g'(a). \\qquad\\blacksquare\\]",
+    "crumbs": [
+      "Chapter 3: Differentiation Rules",
+      "3.4 The Chain Rule"
+    ]
+  },
+  {
+    "objectID": "chain_rule.html#practice-problems",
+    "href": "chain_rule.html#practice-problems",
+    "title": "Lecture Notes: The Chain Rule",
+    "section": "8. Practice problems",
+    "text": "8. Practice problems\nTry these by hand first, then run the cell below to check.\n\n\\(y = (5x^4 - 3x)^{7}\\)\n\\(f(x) = \\sqrt{1 - 2x}\\)\n\\(y = \\cos(a^3 + x^3)\\), where \\(a\\) is a constant\n\\(y = x e^{-x^2}\\)\n\\(g(t) = \\tan^2(3t)\\)\n\\(y = 10^{\\,1 - x^2}\\)\n\\(y = \\sin\\!\\big(\\sin(\\sin x)\\big)\\)\nFind the tangent line to \\(y = (1 + 2x)^{10}\\) at \\((0, 1)\\).\nIf \\(F(x) = f(g(x))\\), where \\(f(-2) = 8\\), \\(f'(-2) = 4\\), \\(f'(5) = 3\\), \\(g(5) = -2\\), and \\(g'(5) = 6\\), find \\(F'(5)\\).\n\n\n\nCode\na = sp.symbols(\"a\")\nproblems = [\n    ((5*x**4 - 3*x)**7, x),\n    (sp.sqrt(1 - 2*x), x),\n    (sp.cos(a**3 + x**3), x),\n    (x * sp.exp(-x**2), x),\n    (sp.tan(3*t)**2, t),\n    (10**(1 - x**2), x),\n    (sp.sin(sp.sin(sp.sin(x))), x),\n]\nfor i, (f, var) in enumerate(problems, 1):\n    df = sp.diff(f, var)\n    df = sp.factor(df) if i in (1, 4) else df\n    display(Math(rf\"\\text{{{i}.}}\\quad \\frac{{d}}{{d{sp.latex(var)}}}\\left({sp.latex(f)}\\right) = {sp.latex(df)}\"))\n\n# 8. tangent line\ny = (1 + 2*x)**10\nm = sp.diff(y, x).subs(x, 0)\ndisplay(Math(rf\"\\text{{8.}}\\quad y = {sp.latex(sp.expand(1 + m*x))}\"))\n\n# 9. F'(5) = f'(g(5)) g'(5) = f'(-2) g'(5)\ndisplay(Math(rf\"\\text{{9.}}\\quad F'(5) = f'(-2)\\cdot g'(5) = {4 * 6}\"))\n\n\n\\(\\displaystyle \\text{1.}\\quad \\frac{d}{dx}\\left(\\left(5 x^{4} - 3 x\\right)^{7}\\right) = 7 x^{6} \\left(5 x^{3} - 3\\right)^{6} \\left(20 x^{3} - 3\\right)\\)\n\n\n\\(\\displaystyle \\text{2.}\\quad \\frac{d}{dx}\\left(\\sqrt{1 - 2 x}\\right) = - \\frac{1}{\\sqrt{1 - 2 x}}\\)\n\n\n\\(\\displaystyle \\text{3.}\\quad \\frac{d}{dx}\\left(\\cos{\\left(a^{3} + x^{3} \\right)}\\right) = - 3 x^{2} \\sin{\\left(a^{3} + x^{3} \\right)}\\)\n\n\n\\(\\displaystyle \\text{4.}\\quad \\frac{d}{dx}\\left(x e^{- x^{2}}\\right) = - \\left(2 x^{2} - 1\\right) e^{- x^{2}}\\)\n\n\n\\(\\displaystyle \\text{5.}\\quad \\frac{d}{dt}\\left(\\tan^{2}{\\left(3 t \\right)}\\right) = \\left(6 \\tan^{2}{\\left(3 t \\right)} + 6\\right) \\tan{\\left(3 t \\right)}\\)\n\n\n\\(\\displaystyle \\text{6.}\\quad \\frac{d}{dx}\\left(10^{1 - x^{2}}\\right) = - 2 \\cdot 10^{1 - x^{2}} x \\log{\\left(10 \\right)}\\)\n\n\n\\(\\displaystyle \\text{7.}\\quad \\frac{d}{dx}\\left(\\sin{\\left(\\sin{\\left(\\sin{\\left(x \\right)} \\right)} \\right)}\\right) = \\cos{\\left(x \\right)} \\cos{\\left(\\sin{\\left(x \\right)} \\right)} \\cos{\\left(\\sin{\\left(\\sin{\\left(x \\right)} \\right)} \\right)}\\)\n\n\n\\(\\displaystyle \\text{8.}\\quad y = 20 x + 1\\)\n\n\n\\(\\displaystyle \\text{9.}\\quad F'(5) = f'(-2)\\cdot g'(5) = 24\\)",
+    "crumbs": [
+      "Chapter 3: Differentiation Rules",
+      "3.4 The Chain Rule"
+    ]
+  },
+  {
+    "objectID": "chain_rule.html#summary",
+    "href": "chain_rule.html#summary",
+    "title": "Lecture Notes: The Chain Rule",
+    "section": "Summary",
+    "text": "Summary\n\n\n\nFunction\nDerivative\nRule\n\n\n\n\n\\(f\\big(g(x)\\big)\\)\n\\(f'\\big(g(x)\\big)\\,g'(x)\\)\nChain\n\n\n\\(\\big[g(x)\\big]^n\\)\n\\(n\\big[g(x)\\big]^{n-1}g'(x)\\)\nPower + Chain\n\n\n\\(e^{g(x)}\\)\n\\(e^{g(x)}\\,g'(x)\\)\nChain\n\n\n\\(b^x\\)\n\\(b^x \\ln b\\)\nChain (\\(b^x = e^{x\\ln b}\\))\n\n\n\nIn Leibniz notation: \\[\\frac{dy}{dx} = \\frac{dy}{du}\\,\\frac{du}{dx} \\qquad\\qquad \\frac{dy}{dx} = \\frac{dy}{du}\\,\\frac{du}{dv}\\,\\frac{dv}{dx}\\]\nKey ideas. - Identify the outer and inner functions. Differentiate the outer function, leave the inner function unchanged inside it, then multiply by the derivative of the inner function. - \\(\\sin(x^2) \\neq \\sin^2 x\\): they are different compositions with different derivatives. - Don’t expand large powers like \\((x^3-1)^{100}\\); use the Power Rule with the Chain Rule. - Rewrite roots and reciprocals as powers to avoid the Quotient Rule. - For longer chains, work from the outside in, one layer at a time. - The naive “cancel \\(du\\)” proof fails when \\(\\Delta u = 0\\); the \\(\\varepsilon\\) proof avoids dividing by \\(\\Delta u\\).\nPrevious: §3.3 Derivatives of Trigonometric Functions.",
+    "crumbs": [
+      "Chapter 3: Differentiation Rules",
+      "3.4 The Chain Rule"
+    ]
+  },
+  {
+    "objectID": "product_and_quotient_rules.html",
+    "href": "product_and_quotient_rules.html",
+    "title": "Lecture Notes: The Product and Quotient Rules",
+    "section": "",
+    "text": "Stewart, Calculus, 9th ed., §3.2\nLearning objectives. By the end of this lecture you should be able to: 1. Explain why \\((fg)' \\neq f'g'\\) and \\((f/g)' \\neq f'/g'\\). 2. Derive the Product Rule and the Quotient Rule from the limit definition. 3. Apply them to products and quotients of polynomials, powers, and exponentials. 4. Recognize when simplifying first is easier than using either rule. 5. Check every answer symbolically with SymPy and numerically with NumPy.\nCode\nimport numpy as np\nimport sympy as sp\nimport matplotlib.pyplot as plt\nfrom IPython.display import Math, display\n\nsp.init_printing()\nx, t = sp.symbols(\"x t\")",
+    "crumbs": [
+      "Chapter 3: Differentiation Rules",
+      "3.2 The Product and Quotient Rules"
+    ]
+  },
+  {
+    "objectID": "product_and_quotient_rules.html#where-we-are",
+    "href": "product_and_quotient_rules.html#where-we-are",
+    "title": "Lecture Notes: The Product and Quotient Rules",
+    "section": "1. Where we are",
+    "text": "1. Where we are\nFrom §3.1 we can differentiate sums and constant multiples:\n\n\n\nFunction\nDerivative\n\n\n\n\n\\(c\\)\n\\(0\\)\n\n\n\\(x^n\\)\n\\(n x^{n-1}\\)\n\n\n\\(c\\,f \\pm g\\)\n\\(c\\,f' \\pm g'\\)\n\n\n\\(e^x\\)\n\\(e^x\\)\n\n\n\nThis covers polynomials and exponentials. Products like \\(x e^x\\) and quotients like \\(\\dfrac{e^x}{1+x^2}\\) need two new rules.\nAs in §3.1, the helper below compares a derivative found by hand with SymPy’s answer.\n\n\nCode\ndef check(f, by_hand, var=x):\n    \"\"\"Display d/dvar f = by_hand and confirm it agrees with SymPy.\"\"\"\n    ok = sp.simplify(sp.diff(f, var) - by_hand) == 0\n    display(Math(rf\"\\frac{{d}}{{d{sp.latex(var)}}}\\left({sp.latex(f)}\\right) = {sp.latex(by_hand)}\"))\n    print(\"Agrees with SymPy:\", ok)",
+    "crumbs": [
+      "Chapter 3: Differentiation Rules",
+      "3.2 The Product and Quotient Rules"
+    ]
+  },
+  {
+    "objectID": "product_and_quotient_rules.html#the-product-rule",
+    "href": "product_and_quotient_rules.html#the-product-rule",
+    "title": "Lecture Notes: The Product and Quotient Rules",
+    "section": "2. The Product Rule",
+    "text": "2. The Product Rule\nWarning: the derivative of a product is not the product of the derivatives. For example, \\(f(x) = x\\) and \\(g(x) = x^2\\) give \\((fg)' = (x^3)' = 3x^2\\), but \\(f'g' = 1\\cdot 2x = 2x\\).\nThe Product Rule. If \\(f\\) and \\(g\\) are both differentiable, then \\[\\boxed{\\frac{d}{dx}\\big[f(x)\\,g(x)\\big] = f(x)\\,\\frac{d}{dx}\\big[g(x)\\big] + g(x)\\,\\frac{d}{dx}\\big[f(x)\\big]}\\] In prime notation: \\((fg)' = fg' + gf'\\). In words: the first times the derivative of the second, plus the second times the derivative of the first.\nProof. Subtract and add \\(f(x+h)\\,g(x)\\) in the numerator: \\[\\frac{f(x+h)g(x+h) - f(x)g(x)}{h}\n= f(x+h)\\,\\frac{g(x+h) - g(x)}{h} + g(x)\\,\\frac{f(x+h) - f(x)}{h}.\\] Let \\(h \\to 0\\). Since \\(f\\) is differentiable, it is continuous, so \\(f(x+h)\\to f(x)\\). The two difference quotients go to \\(g'(x)\\) and \\(f'(x)\\). \\(\\blacksquare\\)\nGeometric picture. Think of \\(u = f(x)\\) and \\(v = g(x)\\) as the sides of a rectangle with area \\(uv\\). When \\(x\\) changes, the change in area is \\(\\Delta(uv) = u\\,\\Delta v + v\\,\\Delta u + \\Delta u\\,\\Delta v\\). The last term is tiny compared with the others, and it disappears in the limit.\nWe check the rule for general functions \\(f\\) and \\(g\\):\n\n\nCode\nf, g = sp.Function(\"f\")(x), sp.Function(\"g\")(x)\nlhs = sp.diff(f * g, x)\nrhs = f * sp.diff(g, x) + g * sp.diff(f, x)\nprint(\"Product rule holds:\", sp.simplify(lhs - rhs) == 0)\n\n\nProduct rule holds: True\n\n\nExample 1. If \\(f(x) = x e^x\\), find \\(f'(x)\\) and \\(f^{(n)}(x)\\).\nBy hand. \\[f'(x) = x\\,(e^x)' + e^x\\,(x)' = xe^x + e^x = (x+1)e^x.\\] \\[f''(x) = (x+1)e^x + e^x\\cdot 1 = (x+2)e^x, \\qquad f^{\\prime\\prime\\prime}(x) = (x+3)e^x.\\] Each time we differentiate, the coefficient goes up by one, so \\(f^{(n)}(x) = (x+n)e^x\\).\n\n\nCode\nf = x * sp.exp(x)\ncheck(f, (x + 1) * sp.exp(x))\nfor k in range(1, 6):\n    print(f\"f^({k}) = (x+{k})e^x:\", sp.simplify(sp.diff(f, x, k) - (x + k) * sp.exp(x)) == 0)\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(x e^{x}\\right) = \\left(x + 1\\right) e^{x}\\)\n\n\nAgrees with SymPy: True\nf^(1) = (x+1)e^x: True\nf^(2) = (x+2)e^x: True\nf^(3) = (x+3)e^x: True\nf^(4) = (x+4)e^x: True\nf^(5) = (x+5)e^x: True\n\n\nExample 2. Differentiate \\(f(t) = \\sqrt{t}\\,(a + bt)\\), where \\(a\\) and \\(b\\) are constants.\nMethod 1 (Product Rule). \\[f'(t) = \\sqrt t\\cdot b + (a + bt)\\cdot\\frac{1}{2\\sqrt t} = \\frac{2bt + a + bt}{2\\sqrt t} = \\frac{a + 3bt}{2\\sqrt t}.\\]\nMethod 2 (expand first). \\(f(t) = a t^{1/2} + b t^{3/2}\\), so \\(f'(t) = \\tfrac12 a t^{-1/2} + \\tfrac32 b t^{1/2}\\). This is the same answer.\nLesson: sometimes simplifying first is faster than using the Product Rule.\n\n\nCode\na, b = sp.symbols(\"a b\")\ncheck(sp.sqrt(t) * (a + b*t), (a + 3*b*t) / (2 * sp.sqrt(t)), var=t)\n\n\n\\(\\displaystyle \\frac{d}{dt}\\left(\\sqrt{t} \\left(a + b t\\right)\\right) = \\frac{a + 3 b t}{2 \\sqrt{t}}\\)\n\n\nAgrees with SymPy: True\n\n\nExample 3. If \\(f(x) = \\sqrt{x}\\,g(x)\\), where \\(g(4) = 2\\) and \\(g'(4) = 3\\), find \\(f'(4)\\).\nBy hand. \\[f'(x) = \\sqrt x\\, g'(x) + g(x)\\cdot\\frac{1}{2\\sqrt x}\n\\quad\\Longrightarrow\\quad\nf'(4) = 2\\cdot 3 + 2\\cdot\\frac14 = 6.5.\\]\n\n\nCode\n# f'(4) depends only on g(4) and g'(4), so any g with those values works,\n# e.g. the line g(x) = 2 + 3(x - 4).\ng = 2 + 3 * (x - 4)\nprint(\"f'(4) =\", sp.diff(sp.sqrt(x) * g, x).subs(x, 4))\n\n\nf'(4) = 13/2",
+    "crumbs": [
+      "Chapter 3: Differentiation Rules",
+      "3.2 The Product and Quotient Rules"
+    ]
+  },
+  {
+    "objectID": "product_and_quotient_rules.html#the-quotient-rule",
+    "href": "product_and_quotient_rules.html#the-quotient-rule",
+    "title": "Lecture Notes: The Product and Quotient Rules",
+    "section": "3. The Quotient Rule",
+    "text": "3. The Quotient Rule\nThe Quotient Rule. If \\(f\\) and \\(g\\) are differentiable and \\(g(x) \\neq 0\\), then \\[\\boxed{\\frac{d}{dx}\\left[\\frac{f(x)}{g(x)}\\right] = \\frac{g(x)\\,\\dfrac{d}{dx}\\big[f(x)\\big] - f(x)\\,\\dfrac{d}{dx}\\big[g(x)\\big]}{\\big[g(x)\\big]^2}}\\] In prime notation: \\(\\left(\\dfrac{f}{g}\\right)' = \\dfrac{gf' - fg'}{g^2}\\). A common way to remember it: “low d-high minus high d-low, over the square of what’s below.”\nThe order matters because of the minus sign. The numerator starts with the denominator \\(g\\).\nProof. Let \\(Q = f/g\\). Then \\[\\frac{Q(x+h) - Q(x)}{h} = \\frac{f(x+h)g(x) - f(x)g(x+h)}{h\\,g(x+h)\\,g(x)}.\\] Subtract and add \\(f(x)g(x)\\) in the numerator: \\[= \\frac{g(x)\\,\\dfrac{f(x+h)-f(x)}{h} - f(x)\\,\\dfrac{g(x+h)-g(x)}{h}}{g(x+h)\\,g(x)}\n\\;\\xrightarrow{h\\to0}\\; \\frac{g(x)f'(x) - f(x)g'(x)}{g(x)^2},\\] since \\(g\\) is continuous, so \\(g(x+h) \\to g(x)\\). \\(\\blacksquare\\)\n\n\nCode\nf, g = sp.Function(\"f\")(x), sp.Function(\"g\")(x)\nlhs = sp.diff(f / g, x)\nrhs = (g * sp.diff(f, x) - f * sp.diff(g, x)) / g**2\nprint(\"Quotient rule holds:\", sp.simplify(lhs - rhs) == 0)\n\n\nQuotient rule holds: True\n\n\nExample 4. Let \\(y = \\dfrac{x^2 + x - 2}{x^3 + 6}\\). Find \\(y'\\).\nBy hand. \\[y' = \\frac{(x^3+6)(2x+1) - (x^2+x-2)(3x^2)}{(x^3+6)^2}\n= \\frac{(2x^4 + x^3 + 12x + 6) - (3x^4 + 3x^3 - 6x^2)}{(x^3+6)^2}\n= \\frac{-x^4 - 2x^3 + 6x^2 + 12x + 6}{(x^3+6)^2}.\\]\n\n\nCode\ny = (x**2 + x - 2) / (x**3 + 6)\ncheck(y, (-x**4 - 2*x**3 + 6*x**2 + 12*x + 6) / (x**3 + 6)**2)\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(\\frac{x^{2} + x - 2}{x^{3} + 6}\\right) = \\frac{- x^{4} - 2 x^{3} + 6 x^{2} + 12 x + 6}{\\left(x^{3} + 6\\right)^{2}}\\)\n\n\nAgrees with SymPy: True\n\n\nExample 5. Find an equation of the tangent line to \\(y = \\dfrac{e^x}{1 + x^2}\\) at the point \\(\\left(1, \\tfrac{e}{2}\\right)\\).\nBy hand. \\[y' = \\frac{(1+x^2)e^x - e^x(2x)}{(1+x^2)^2} = \\frac{e^x(1-x)^2}{(1+x^2)^2}.\\] At \\(x = 1\\), \\(y' = 0\\). The tangent line is horizontal: \\(y = \\dfrac{e}{2}\\).\nAlso notice that \\(y' \\ge 0\\) everywhere, so the function is always increasing. It has a horizontal tangent only at \\(x = 1\\).\n\n\nCode\ny = sp.exp(x) / (1 + x**2)\ncheck(y, sp.exp(x) * (1 - x)**2 / (1 + x**2)**2)\nprint(\"slope at x = 1:\", sp.diff(y, x).subs(x, 1))\n\nxs = np.linspace(-1.5, 2.5, 300)\nfig, ax = plt.subplots(figsize=(6, 5))\nax.plot(xs, np.exp(xs) / (1 + xs**2), \"k\", lw=2, label=r\"$y = e^x/(1+x^2)$\")\nax.axhline(np.e / 2, lw=1.5, label=r\"tangent $y = e/2$\")\nax.plot(1, np.e / 2, \"ko\")\nax.legend()\nax.set_title(r\"Horizontal tangent at $(1, e/2)$\")\nplt.show()\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(\\frac{e^{x}}{x^{2} + 1}\\right) = \\frac{\\left(1 - x\\right)^{2} e^{x}}{\\left(x^{2} + 1\\right)^{2}}\\)\n\n\nAgrees with SymPy: True\nslope at x = 1: 0\n\n\n\n\n\n\n\n\n\nTip: don’t use the Quotient Rule every time you see a quotient. For example, \\[F(x) = \\frac{3x^2 + 2\\sqrt x}{x} = 3x + 2x^{-1/2}\n\\quad\\Longrightarrow\\quad F'(x) = 3 - x^{-3/2}.\\] Simplifying first is much faster than using the Quotient Rule here.\n\n\nCode\ncheck((3*x**2 + 2*sp.sqrt(x)) / x, 3 - x**sp.Rational(-3, 2))\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(\\frac{2 \\sqrt{x} + 3 x^{2}}{x}\\right) = 3 - \\frac{1}{x^{\\frac{3}{2}}}\\)\n\n\nAgrees with SymPy: True",
+    "crumbs": [
+      "Chapter 3: Differentiation Rules",
+      "3.2 The Product and Quotient Rules"
+    ]
+  },
+  {
+    "objectID": "product_and_quotient_rules.html#a-numerical-sanity-check",
+    "href": "product_and_quotient_rules.html#a-numerical-sanity-check",
+    "title": "Lecture Notes: The Product and Quotient Rules",
+    "section": "4. A numerical sanity check",
+    "text": "4. A numerical sanity check\nSymbolic checks can hide algebra slips if we type the wrong function. As an independent check, we compare each by-hand derivative with a central difference \\(\\dfrac{f(x+h) - f(x-h)}{2h}\\) at many points.\n\n\nCode\ndef numeric_check(f, fprime, a=0.2, b=3.0, step=1e-5):\n    fn, dfn = sp.lambdify(x, f, \"numpy\"), sp.lambdify(x, fprime, \"numpy\")\n    xs = np.linspace(a, b, 200)\n    approx = (fn(xs + step) - fn(xs - step)) / (2 * step)\n    exact = dfn(xs)\n    return np.max(np.abs(approx - exact)) / np.max(np.abs(exact))\n\ntests = {\n    r\"x e^x\": (x * sp.exp(x), (x + 1) * sp.exp(x)),\n    r\"\\frac{x^2+x-2}{x^3+6}\": ((x**2 + x - 2) / (x**3 + 6),\n                               (-x**4 - 2*x**3 + 6*x**2 + 12*x + 6) / (x**3 + 6)**2),\n    r\"\\frac{e^x}{1+x^2}\": (sp.exp(x) / (1 + x**2), sp.exp(x) * (1 - x)**2 / (1 + x**2)**2),\n    r\"\\frac{3x^2 + 2\\sqrt{x}}{x}\": ((3*x**2 + 2*sp.sqrt(x)) / x, 3 - x**sp.Rational(-3, 2)),\n}\nfor name, (f, fp) in tests.items():\n    rel = numeric_check(f, fp)\n    display(Math(rf\"{name}: \\quad \\text{{relative error}} \\approx {rel:.1e}\"))\n\n\n\\(\\displaystyle x e^x: \\quad \\text{relative error} \\approx 3.7e-11\\)\n\n\n\\(\\displaystyle \\frac{x^2+x-2}{x^3+6}: \\quad \\text{relative error} \\approx 4.9e-11\\)\n\n\n\\(\\displaystyle \\frac{e^x}{1+x^2}: \\quad \\text{relative error} \\approx 7.8e-11\\)\n\n\n\\(\\displaystyle \\frac{3x^2 + 2\\sqrt{x}}{x}: \\quad \\text{relative error} \\approx 2.1e-09\\)",
+    "crumbs": [
+      "Chapter 3: Differentiation Rules",
+      "3.2 The Product and Quotient Rules"
+    ]
+  },
+  {
+    "objectID": "product_and_quotient_rules.html#practice-problems",
+    "href": "product_and_quotient_rules.html#practice-problems",
+    "title": "Lecture Notes: The Product and Quotient Rules",
+    "section": "5. Practice problems",
+    "text": "5. Practice problems\nTry these by hand first, then run the cell below to check.\n\n\\(g(x) = (x^3 - 2x)\\,e^x\\)\n\\(y = (x^2 + 1)(x^3 - x)\\) (do it two ways: Product Rule, then expand first)\n\\(h(t) = \\dfrac{e^t}{t^2 + 1}\\)\n\\(y = \\dfrac{1 - xe^x}{x + e^x}\\)\nFind the tangent line to \\(y = \\dfrac{2x}{x+1}\\) at \\((1, 1)\\).\nIf \\(f(2) = 10\\), \\(f'(2) = -2\\), \\(g(2) = 3\\), and \\(g'(2) = 4\\), find \\((fg)'(2)\\) and \\((f/g)'(2)\\).\n\n\n\nCode\nproblems = [\n    (x**3 - 2*x) * sp.exp(x),\n    (x**2 + 1) * (x**3 - x),\n    sp.exp(t) / (t**2 + 1),\n    (1 - x*sp.exp(x)) / (x + sp.exp(x)),\n]\nfor i, f in enumerate(problems, 1):\n    var = t if f.has(t) else x\n    df = sp.diff(f, var)\n    df = sp.expand(df) if i == 2 else sp.factor(sp.simplify(df))\n    display(Math(rf\"\\text{{{i}.}}\\quad \\frac{{d}}{{d{var}}}\\left({sp.latex(f)}\\right) = {sp.latex(df)}\"))\n\n# 5. tangent line\ny = 2*x / (x + 1)\nm = sp.diff(y, x).subs(x, 1)\ndisplay(Math(rf\"\\text{{5.}}\\quad y = {sp.latex(sp.expand(1 + m*(x - 1)))}\"))\n\n# 6. product and quotient rules at a point\nf2, df2, g2, dg2 = 10, -2, 3, 4\ndisplay(Math(rf\"\\text{{6.}}\\quad (fg)'(2) = {f2*dg2 + g2*df2}, \\qquad (f/g)'(2) = {sp.latex(sp.Rational(g2*df2 - f2*dg2, g2**2))}\"))\n\n\n\\(\\displaystyle \\text{1.}\\quad \\frac{d}{dx}\\left(\\left(x^{3} - 2 x\\right) e^{x}\\right) = \\left(x - 1\\right) \\left(x^{2} + 4 x + 2\\right) e^{x}\\)\n\n\n\\(\\displaystyle \\text{2.}\\quad \\frac{d}{dx}\\left(\\left(x^{2} + 1\\right) \\left(x^{3} - x\\right)\\right) = 5 x^{4} - 1\\)\n\n\n\\(\\displaystyle \\text{3.}\\quad \\frac{d}{dt}\\left(\\frac{e^{t}}{t^{2} + 1}\\right) = \\frac{\\left(t - 1\\right)^{2} e^{t}}{\\left(t^{2} + 1\\right)^{2}}\\)\n\n\n\\(\\displaystyle \\text{4.}\\quad \\frac{d}{dx}\\left(\\frac{- x e^{x} + 1}{x + e^{x}}\\right) = - \\frac{x^{2} e^{x} + e^{2 x} + e^{x} + 1}{\\left(x + e^{x}\\right)^{2}}\\)\n\n\n\\(\\displaystyle \\text{5.}\\quad y = \\frac{x}{2} + \\frac{1}{2}\\)\n\n\n\\(\\displaystyle \\text{6.}\\quad (fg)'(2) = 34, \\qquad (f/g)'(2) = - \\frac{46}{9}\\)",
+    "crumbs": [
+      "Chapter 3: Differentiation Rules",
+      "3.2 The Product and Quotient Rules"
+    ]
+  },
+  {
+    "objectID": "product_and_quotient_rules.html#summary",
+    "href": "product_and_quotient_rules.html#summary",
+    "title": "Lecture Notes: The Product and Quotient Rules",
+    "section": "Summary",
+    "text": "Summary\n\n\n\nFunction\nDerivative\nRule\n\n\n\n\n\\(f\\,g\\)\n\\(f g' + g f'\\)\nProduct\n\n\n\\(\\dfrac{f}{g}\\)\n\\(\\dfrac{g f' - f g'}{g^2}\\)\nQuotient\n\n\n\nTable of differentiation formulas so far (§3.1–3.2): \\[\\frac{d}{dx}(c) = 0 \\qquad \\frac{d}{dx}(x^n) = nx^{n-1} \\qquad \\frac{d}{dx}(e^x) = e^x\\] \\[(cf)' = cf' \\qquad (f \\pm g)' = f' \\pm g' \\qquad (fg)' = fg' + gf' \\qquad \\left(\\frac{f}{g}\\right)' = \\frac{gf' - fg'}{g^2}\\]\nKey ideas. - \\((fg)' \\neq f'g'\\) and \\((f/g)' \\neq f'/g'\\). - In the Quotient Rule the order matters: the numerator starts with the denominator \\(g\\). - Before using the Product or Quotient Rule, check whether simplifying first is easier.\nPrevious: §3.1 Derivatives of Polynomials and Exponential Functions.\nNext: §3.3 Derivatives of Trigonometric Functions.",
+    "crumbs": [
+      "Chapter 3: Differentiation Rules",
+      "3.2 The Product and Quotient Rules"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Calculus I",
+    "section": "",
+    "text": "Lecture notes and worked examples based on Stewart’s Calculus, 9th edition, with SymPy and NumPy.",
+    "crumbs": [
+      "Home"
+    ]
+  },
+  {
+    "objectID": "index.html#chapter-3-differentiation-rules",
+    "href": "index.html#chapter-3-differentiation-rules",
+    "title": "Calculus I",
+    "section": "Chapter 3: Differentiation Rules",
+    "text": "Chapter 3: Differentiation Rules\n\n3.1 Derivatives of Polynomials and Exponential Functions\n3.2 The Product and Quotient Rules\n3.3 Derivatives of Trigonometric Functions\n3.4 The Chain Rule",
+    "crumbs": [
+      "Home"
+    ]
+  },
+  {
+    "objectID": "derivatives_of_polynomials_and_exp_functions.html",
+    "href": "derivatives_of_polynomials_and_exp_functions.html",
+    "title": "Lecture Notes: Derivatives of Polynomials and Exponential Functions",
+    "section": "",
+    "text": "Stewart, Calculus, 9th ed., §3.1\nLearning objectives. By the end of this lecture you should be able to: 1. Differentiate constants, powers \\(x^n\\), and polynomials without using the limit definition. 2. Use the Constant Multiple, Sum, and Difference Rules. 3. Explain why \\(\\dfrac{d}{dx}(b^x) = f'(0)\\,b^x\\), and why the number \\(e\\) makes \\(\\dfrac{d}{dx}(e^x) = e^x\\). 4. Find tangent lines, normal lines, and horizontal tangents. 5. Check every answer symbolically with SymPy and numerically with NumPy.\nCode\nimport numpy as np\nimport sympy as sp\nimport matplotlib.pyplot as plt\nfrom IPython.display import Math, display\n\nsp.init_printing()\nx, t, h, n = sp.symbols(\"x t h n\")",
+    "crumbs": [
+      "Chapter 3: Differentiation Rules",
+      "3.1 Polynomials and Exponential Functions"
+    ]
+  },
+  {
+    "objectID": "derivatives_of_polynomials_and_exp_functions.html#why-we-need-rules",
+    "href": "derivatives_of_polynomials_and_exp_functions.html#why-we-need-rules",
+    "title": "Lecture Notes: Derivatives of Polynomials and Exponential Functions",
+    "section": "1. Why we need rules",
+    "text": "1. Why we need rules\nBy definition, \\[f'(x) = \\lim_{h\\to 0}\\frac{f(x+h) - f(x)}{h}.\\]\nComputing this limit every time is slow. In this lecture we use the definition once for each basic type of function. The results become rules we can apply right away.\nThe helper below compares a derivative found by hand with SymPy’s answer and displays the result.\n\n\nCode\ndef check(f, by_hand, var=x):\n    \"\"\"Display d/dvar f = by_hand and confirm it agrees with SymPy.\"\"\"\n    ok = sp.simplify(sp.diff(f, var) - by_hand) == 0\n    display(Math(rf\"\\frac{{d}}{{d{sp.latex(var)}}}\\left({sp.latex(f)}\\right) = {sp.latex(by_hand)}\"))\n    print(\"Agrees with SymPy:\", ok)\n\n\ndef diff_from_definition(f, var=x):\n    \"\"\"Compute f'(var) as the limit of the difference quotient.\"\"\"\n    return sp.limit((f.subs(var, var + h) - f) / h, h, 0)",
+    "crumbs": [
+      "Chapter 3: Differentiation Rules",
+      "3.1 Polynomials and Exponential Functions"
+    ]
+  },
+  {
+    "objectID": "derivatives_of_polynomials_and_exp_functions.html#constant-functions-and-the-power-rule",
+    "href": "derivatives_of_polynomials_and_exp_functions.html#constant-functions-and-the-power-rule",
+    "title": "Lecture Notes: Derivatives of Polynomials and Exponential Functions",
+    "section": "2. Constant functions and the Power Rule",
+    "text": "2. Constant functions and the Power Rule\n\nConstant functions\nThe graph of \\(f(x) = c\\) is a horizontal line, so its slope is \\(0\\) everywhere: \\[\\boxed{\\frac{d}{dx}(c) = 0}\\] From the definition: \\(\\dfrac{c - c}{h} = 0\\) for every \\(h \\neq 0\\), so the limit is \\(0\\).\n\n\nPowers with positive integer exponents\nLook at the first few cases, using the limit definition:\n\n\n\n\\(f(x)\\)\n\\(x\\)\n\\(x^2\\)\n\\(x^3\\)\n\\(x^4\\)\n\n\n\n\n\\(f'(x)\\)\n\\(1\\)\n\\(2x\\)\n\\(3x^2\\)\n\\(4x^3\\)\n\n\n\nThe pattern is clear:\nThe Power Rule. If \\(n\\) is a positive integer, then \\[\\boxed{\\frac{d}{dx}(x^n) = n\\,x^{n-1}}\\]\nProof. Use the binomial theorem to expand \\((x+h)^n\\): \\[\\frac{(x+h)^n - x^n}{h} = \\frac{\\left[x^n + n x^{n-1}h + \\binom{n}{2}x^{n-2}h^2 + \\cdots + h^n\\right] - x^n}{h}\n= n x^{n-1} + \\binom{n}{2}x^{n-2}h + \\cdots + h^{n-1}.\\] Every term after the first contains a factor of \\(h\\), so it goes to \\(0\\) as \\(h\\to 0\\). That leaves \\(n x^{n-1}\\). \\(\\blacksquare\\)\nThe table above, computed from the definition:\n\n\nCode\nfor k in range(1, 6):\n    display(Math(rf\"\\frac{{d}}{{dx}}\\left(x^{k}\\right) = {sp.latex(diff_from_definition(x**k))}\"))\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(x^1\\right) = 1\\)\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(x^2\\right) = 2 x\\)\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(x^3\\right) = 3 x^{2}\\)\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(x^4\\right) = 4 x^{3}\\)\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(x^5\\right) = 5 x^{4}\\)\n\n\n\n\nThe general Power Rule\nThe rule holds for every real number \\(n\\): \\[\\boxed{\\frac{d}{dx}(x^n) = n\\,x^{n-1}, \\qquad n \\in \\mathbb{R}}\\] (Stewart proves the general case later with logarithmic differentiation, in §3.6.)\nExample 1. - (a) \\(\\dfrac{d}{dx}\\left(\\dfrac{1}{x^2}\\right) = \\dfrac{d}{dx}\\left(x^{-2}\\right) = -2x^{-3} = -\\dfrac{2}{x^3}\\) - (b) \\(\\dfrac{d}{dx}\\left(\\sqrt[3]{x^2}\\right) = \\dfrac{d}{dx}\\left(x^{2/3}\\right) = \\tfrac{2}{3}x^{-1/3}\\) - (c) \\(\\dfrac{d}{dx}\\left(x^{\\pi}\\right) = \\pi x^{\\pi - 1}\\)\nTip: before you differentiate, rewrite roots and reciprocals as powers.\n\n\nCode\ncheck(1 / x**2, -2 / x**3)\ncheck(x**sp.Rational(2, 3), sp.Rational(2, 3) * x**sp.Rational(-1, 3))\ncheck(x**sp.pi, sp.pi * x**(sp.pi - 1))\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(\\frac{1}{x^{2}}\\right) = - \\frac{2}{x^{3}}\\)\n\n\nAgrees with SymPy: True\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(x^{\\frac{2}{3}}\\right) = \\frac{2}{3 \\sqrt[3]{x}}\\)\n\n\nAgrees with SymPy: True\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(x^{\\pi}\\right) = \\pi x^{-1 + \\pi}\\)\n\n\nAgrees with SymPy: True\n\n\nExample 2 (tangent and normal lines). Find the tangent line and the normal line to \\(y = x\\sqrt{x}\\) at the point \\((1, 1)\\).\nBy hand. \\(y = x^{3/2}\\), so \\(y' = \\tfrac{3}{2}x^{1/2}\\). At \\(x = 1\\) the slope is \\(m = \\tfrac32\\). - Tangent: \\(y - 1 = \\tfrac32(x - 1)\\), so \\(y = \\tfrac32 x - \\tfrac12\\). - The normal line is perpendicular to the tangent, so its slope is \\(-1/m = -\\tfrac23\\). Normal: \\(y - 1 = -\\tfrac23(x-1)\\), so \\(y = -\\tfrac23 x + \\tfrac53\\).\n\n\nCode\ny = x * sp.sqrt(x)\nm = sp.diff(y, x).subs(x, 1)\ntangent = sp.expand(1 + m * (x - 1))\nnormal = sp.expand(1 - (x - 1) / m)\ndisplay(Math(rf\"\\text{{tangent: }} y = {sp.latex(tangent)}, \\qquad \\text{{normal: }} y = {sp.latex(normal)}\"))\n\nxs = np.linspace(0, 2.5, 300)\nfig, ax = plt.subplots(figsize=(6, 5))\nax.plot(xs, xs**1.5, \"k\", lw=2, label=r\"$y = x\\sqrt{x}$\")\nax.plot(xs, 1.5 * xs - 0.5, lw=1.5, label=\"tangent\")\nax.plot(xs, -2 / 3 * xs + 5 / 3, lw=1.5, label=\"normal\")\nax.plot(1, 1, \"ko\")\nax.set_aspect(\"equal\")\nax.set_ylim(-0.5, 3)\nax.legend()\nax.set_title(r\"Tangent and normal lines at $(1,1)$\")\nplt.show()\n\n\n\\(\\displaystyle \\text{tangent: } y = \\frac{3 x}{2} - \\frac{1}{2}, \\qquad \\text{normal: } y = \\frac{5}{3} - \\frac{2 x}{3}\\)",
+    "crumbs": [
+      "Chapter 3: Differentiation Rules",
+      "3.1 Polynomials and Exponential Functions"
+    ]
+  },
+  {
+    "objectID": "derivatives_of_polynomials_and_exp_functions.html#new-derivatives-from-old",
+    "href": "derivatives_of_polynomials_and_exp_functions.html#new-derivatives-from-old",
+    "title": "Lecture Notes: Derivatives of Polynomials and Exponential Functions",
+    "section": "3. New derivatives from old",
+    "text": "3. New derivatives from old\nSuppose \\(c\\) is a constant and \\(f\\) and \\(g\\) are differentiable.\n\n\n\n\n\n\n\nRule\nFormula\n\n\n\n\nConstant Multiple\n\\(\\dfrac{d}{dx}\\big[c\\,f(x)\\big] = c\\,\\dfrac{d}{dx}f(x)\\)\n\n\nSum\n\\(\\dfrac{d}{dx}\\big[f(x) + g(x)\\big] = \\dfrac{d}{dx}f(x) + \\dfrac{d}{dx}g(x)\\)\n\n\nDifference\n\\(\\dfrac{d}{dx}\\big[f(x) - g(x)\\big] = \\dfrac{d}{dx}f(x) - \\dfrac{d}{dx}g(x)\\)\n\n\n\nProof of the Sum Rule. Let \\(F = f + g\\). Then \\[F'(x) = \\lim_{h\\to0}\\frac{[f(x+h)+g(x+h)] - [f(x)+g(x)]}{h}\n= \\lim_{h\\to0}\\frac{f(x+h)-f(x)}{h} + \\lim_{h\\to0}\\frac{g(x+h)-g(x)}{h} = f'(x) + g'(x).\\] The limit of a sum is the sum of the limits, and both limits exist because \\(f\\) and \\(g\\) are differentiable. \\(\\blacksquare\\)\nThe Sum Rule extends to any finite number of terms. Together with the Power Rule, this means we can differentiate any polynomial term by term.\nExample 3. \\[\\frac{d}{dx}\\left(x^8 + 12x^5 - 4x^4 + 10x^3 - 6x + 5\\right) = 8x^7 + 60x^4 - 16x^3 + 30x^2 - 6.\\]\n\n\nCode\np = x**8 + 12*x**5 - 4*x**4 + 10*x**3 - 6*x + 5\ncheck(p, 8*x**7 + 60*x**4 - 16*x**3 + 30*x**2 - 6)\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(x^{8} + 12 x^{5} - 4 x^{4} + 10 x^{3} - 6 x + 5\\right) = 8 x^{7} + 60 x^{4} - 16 x^{3} + 30 x^{2} - 6\\)\n\n\nAgrees with SymPy: True\n\n\nExample 4 (horizontal tangents). Find the points on \\(y = x^4 - 6x^2 + 4\\) where the tangent line is horizontal.\nBy hand. A horizontal tangent has slope \\(0\\): \\[y' = 4x^3 - 12x = 4x(x^2 - 3) = 0 \\quad\\Longrightarrow\\quad x = 0,\\ \\pm\\sqrt3.\\] The points are \\((0, 4)\\), \\((\\sqrt3, -5)\\), and \\((-\\sqrt3, -5)\\).\n\n\nCode\ny = x**4 - 6*x**2 + 4\ncrit = sp.solve(sp.diff(y, x), x)\npts = [(c, y.subs(x, c)) for c in crit]\ndisplay(Math(r\"\\text{Horizontal tangents at } \" + \", \".join(sp.latex(pt) for pt in pts)))\n\nxs = np.linspace(-2.6, 2.6, 400)\nf = sp.lambdify(x, y, \"numpy\")\nfig, ax = plt.subplots(figsize=(6, 5))\nax.plot(xs, f(xs), \"k\", lw=2, label=r\"$y = x^4 - 6x^2 + 4$\")\nfor cx, cy in pts:\n    cx, cy = float(cx), float(cy)\n    ax.plot([cx - 0.6, cx + 0.6], [cy, cy], lw=1.5)\n    ax.plot(cx, cy, \"ko\")\nax.set_ylim(-7, 8)\nax.legend()\nax.set_title(\"Horizontal tangent lines\")\nplt.show()\n\n\n\\(\\displaystyle \\text{Horizontal tangents at } \\left( 0, \\  4\\right), \\left( - \\sqrt{3}, \\  -5\\right), \\left( \\sqrt{3}, \\  -5\\right)\\)",
+    "crumbs": [
+      "Chapter 3: Differentiation Rules",
+      "3.1 Polynomials and Exponential Functions"
+    ]
+  },
+  {
+    "objectID": "derivatives_of_polynomials_and_exp_functions.html#exponential-functions",
+    "href": "derivatives_of_polynomials_and_exp_functions.html#exponential-functions",
+    "title": "Lecture Notes: Derivatives of Polynomials and Exponential Functions",
+    "section": "4. Exponential functions",
+    "text": "4. Exponential functions\nLet \\(f(x) = b^x\\) with \\(b &gt; 0\\). The definition gives \\[f'(x) = \\lim_{h\\to0}\\frac{b^{x+h} - b^x}{h} = \\lim_{h\\to0}\\frac{b^x\\,b^h - b^x}{h} = b^x \\lim_{h\\to0}\\frac{b^h - 1}{h}.\\] The remaining limit does not depend on \\(x\\). It is exactly \\(f'(0)\\), the slope of \\(y = b^x\\) at \\(x = 0\\). So \\[\\boxed{\\frac{d}{dx}\\left(b^x\\right) = f'(0)\\,b^x, \\qquad f'(0) = \\lim_{h\\to0}\\frac{b^h-1}{h}}\\]\nAn exponential function’s rate of change is proportional to the function itself. We still need the constant \\(f'(0)\\). Let’s estimate it numerically for \\(b = 2\\) and \\(b = 3\\):\n\n\nCode\nhs = np.array([0.1, 0.01, 0.001, 0.0001])\nprint(f\"{'h':&gt;8} {'(2^h-1)/h':&gt;12} {'(3^h-1)/h':&gt;12}\")\nfor hv in hs:\n    print(f\"{hv:&gt;8} {(2**hv - 1) / hv:&gt;12.6f} {(3**hv - 1) / hv:&gt;12.6f}\")\n\n\n       h    (2^h-1)/h    (3^h-1)/h\n     0.1     0.717735     1.161232\n    0.01     0.695555     1.104669\n   0.001     0.693387     1.099216\n  0.0001     0.693171     1.098673\n\n\nSo \\(f'(0) \\approx 0.69\\) when \\(b = 2\\), and \\(f'(0) \\approx 1.10\\) when \\(b = 3\\). Somewhere between \\(2\\) and \\(3\\) there is a base for which \\(f'(0) = 1\\) exactly.\nDefinition of \\(e\\). \\(e\\) is the number such that \\[\\boxed{\\lim_{h\\to0}\\frac{e^h - 1}{h} = 1}\\] Geometrically, \\(y = e^x\\) is the only exponential function whose tangent line at \\((0,1)\\) has slope exactly \\(1\\). Its value is \\(e \\approx 2.71828\\).\nDerivative of the natural exponential function. \\[\\boxed{\\frac{d}{dx}\\left(e^x\\right) = e^x}\\] \\(e^x\\) is its own derivative: at every point, the slope of the graph equals the height of the graph.\n(In §3.6 we’ll see that \\(f'(0) = \\ln b\\), so \\(\\dfrac{d}{dx}(b^x) = b^x \\ln b\\). Check: \\(\\ln 2 \\approx 0.693\\) and \\(\\ln 3 \\approx 1.099\\).)\n\n\nCode\nfor b in [2, 3, sp.E]:\n    lim = sp.limit((b**h - 1) / h, h, 0)\n    display(Math(rf\"b = {sp.latex(b)}: \\quad \\lim_{{h\\to0}}\\frac{{b^h - 1}}{{h}} = {sp.latex(lim)} \\approx {float(lim):.5f}\"))\n\ncheck(sp.exp(x), sp.exp(x))\n\n\n\\(\\displaystyle b = 2: \\quad \\lim_{h\\to0}\\frac{b^h - 1}{h} = \\log{\\left(2 \\right)} \\approx 0.69315\\)\n\n\n\\(\\displaystyle b = 3: \\quad \\lim_{h\\to0}\\frac{b^h - 1}{h} = \\log{\\left(3 \\right)} \\approx 1.09861\\)\n\n\n\\(\\displaystyle b = e: \\quad \\lim_{h\\to0}\\frac{b^h - 1}{h} = 1 \\approx 1.00000\\)\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(e^{x}\\right) = e^{x}\\)\n\n\nAgrees with SymPy: True\n\n\n\n\nCode\nxs = np.linspace(-1.5, 1.5, 300)\nfig, ax = plt.subplots(figsize=(6, 5))\nfor b, ls in [(2, \"--\"), (np.e, \"-\"), (3, \":\")]:\n    label = r\"$e^x$\" if b == np.e else rf\"${b}^x$\"\n    ax.plot(xs, b**xs, \"k\", ls=ls, lw=2, label=label)\nax.plot(xs, 1 + xs, lw=1.5, label=r\"slope-1 line $y = 1 + x$\")\nax.plot(0, 1, \"ko\")\nax.set_ylim(-0.5, 4)\nax.legend()\nax.set_title(r\"Only $e^x$ has slope $1$ at $(0,1)$\")\nplt.show()\n\n\n\n\n\n\n\n\n\nExample 5. If \\(f(x) = e^x - x\\), find \\(f'\\) and \\(f''\\).\nBy hand. \\(f'(x) = e^x - 1\\) and \\(f''(x) = e^x\\). Since \\(f''(x) &gt; 0\\) for all \\(x\\), \\(f'\\) is always increasing. (Note that \\(f'(0) = 0\\): the graph has a horizontal tangent at \\((0, 1)\\).)\n\n\nCode\nf = sp.exp(x) - x\ncheck(f, sp.exp(x) - 1)\ncheck(sp.diff(f, x), sp.exp(x))\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(- x + e^{x}\\right) = e^{x} - 1\\)\n\n\nAgrees with SymPy: True\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(e^{x} - 1\\right) = e^{x}\\)\n\n\nAgrees with SymPy: True\n\n\nExample 6. At what point on \\(y = e^x\\) is the tangent line parallel to \\(y = 2x\\)?\nBy hand. Parallel lines have equal slopes, so we need \\(y' = e^x = 2\\). That gives \\(x = \\ln 2\\), and \\(y = e^{\\ln 2} = 2\\). The point is \\((\\ln 2,\\ 2)\\).\n\n\nCode\nsol = sp.solve(sp.Eq(sp.diff(sp.exp(x), x), 2), x)\ndisplay(Math(rf\"x = {sp.latex(sol[0])}, \\quad y = {sp.latex(sp.exp(sol[0]))}\"))\n\n\n\\(\\displaystyle x = \\log{\\left(2 \\right)}, \\quad y = 2\\)",
+    "crumbs": [
+      "Chapter 3: Differentiation Rules",
+      "3.1 Polynomials and Exponential Functions"
+    ]
+  },
+  {
+    "objectID": "derivatives_of_polynomials_and_exp_functions.html#a-numerical-sanity-check",
+    "href": "derivatives_of_polynomials_and_exp_functions.html#a-numerical-sanity-check",
+    "title": "Lecture Notes: Derivatives of Polynomials and Exponential Functions",
+    "section": "5. A numerical sanity check",
+    "text": "5. A numerical sanity check\nSymbolic checks can hide algebra slips if we type the wrong function. As an independent check, we compare each by-hand derivative with a central difference \\(\\dfrac{f(x+h) - f(x-h)}{2h}\\) at many points.\n\n\nCode\ndef numeric_check(f, fprime, a=0.2, b=3.0, step=1e-5):\n    fn, dfn = sp.lambdify(x, f, \"numpy\"), sp.lambdify(x, fprime, \"numpy\")\n    xs = np.linspace(a, b, 200)\n    approx = (fn(xs + step) - fn(xs - step)) / (2 * step)\n    exact = dfn(xs)\n    return np.max(np.abs(approx - exact)) / np.max(np.abs(exact))\n\ntests = {\n    r\"x\\sqrt{x}\": (x * sp.sqrt(x), sp.Rational(3, 2) * sp.sqrt(x)),\n    r\"x^8 + 12x^5 - \\cdots\": (p, 8*x**7 + 60*x**4 - 16*x**3 + 30*x**2 - 6),\n    r\"x^4 - 6x^2 + 4\": (x**4 - 6*x**2 + 4, 4*x**3 - 12*x),\n    r\"e^x - x\": (sp.exp(x) - x, sp.exp(x) - 1),\n}\nfor name, (f, fp) in tests.items():\n    rel = numeric_check(f, fp)\n    display(Math(rf\"{name}: \\quad \\text{{relative error}} \\approx {rel:.1e}\"))\n\n\n\\(\\displaystyle x\\sqrt{x}: \\quad \\text{relative error} \\approx 2.7e-11\\)\n\n\n\\(\\displaystyle x^8 + 12x^5 - \\cdots: \\quad \\text{relative error} \\approx 7.4e-11\\)\n\n\n\\(\\displaystyle x^4 - 6x^2 + 4: \\quad \\text{relative error} \\approx 3.0e-11\\)\n\n\n\\(\\displaystyle e^x - x: \\quad \\text{relative error} \\approx 3.0e-11\\)",
+    "crumbs": [
+      "Chapter 3: Differentiation Rules",
+      "3.1 Polynomials and Exponential Functions"
+    ]
+  },
+  {
+    "objectID": "derivatives_of_polynomials_and_exp_functions.html#practice-problems",
+    "href": "derivatives_of_polynomials_and_exp_functions.html#practice-problems",
+    "title": "Lecture Notes: Derivatives of Polynomials and Exponential Functions",
+    "section": "6. Practice problems",
+    "text": "6. Practice problems\nTry these by hand first, then run the cell below to check.\n\n\\(f(x) = 5x^4 - 3x^{2/3} + \\dfrac{7}{x}\\)\n\\(y = \\dfrac{x^2 + 4x + 3}{\\sqrt x}\\) (simplify first)\n\\(y = 3e^x + \\dfrac{4}{\\sqrt[3]{x}}\\)\nFind the tangent and normal lines to \\(y = x^4 + 2e^x\\) at \\((0, 2)\\).\nFor what values of \\(x\\) does \\(f(x) = x^3 + 3x^2 + x + 3\\) have a horizontal tangent?\nFor what value of \\(a\\) does the tangent line to \\(y = e^x\\) at \\(x = a\\) pass through the origin?\n\n\n\nCode\nproblems = [\n    5*x**4 - 3*x**sp.Rational(2, 3) + 7/x,\n    (x**2 + 4*x + 3) / sp.sqrt(x),\n    3*sp.exp(x) + 4*x**sp.Rational(-1, 3),\n]\nfor i, f in enumerate(problems, 1):\n    df = sp.diff(f, x)\n    df = sp.factor(sp.simplify(df)) if i == 2 else df\n    display(Math(rf\"\\text{{{i}.}}\\quad \\frac{{d}}{{dx}}\\left({sp.latex(f)}\\right) = {sp.latex(df)}\"))\n\n# 4. tangent and normal lines at (0, 2)\ny = x**4 + 2*sp.exp(x)\nm = sp.diff(y, x).subs(x, 0)\ndisplay(Math(rf\"\\text{{4.}}\\quad \\text{{tangent: }} y = {sp.latex(2 + m*x)}, \\qquad \\text{{normal: }} y = {sp.latex(2 - x/m)}\"))\n\n# 5. horizontal tangents\nf = x**3 + 3*x**2 + x + 3\ndisplay(Math(rf\"\\text{{5.}}\\quad x = {sp.latex(sp.solve(sp.diff(f, x), x))}\"))\n\n# 6. tangent at x = a is y = e^a + e^a (x - a); set x = 0, y = 0\na = sp.symbols(\"a\")\ndisplay(Math(rf\"\\text{{6.}}\\quad a = {sp.latex(sp.solve(sp.exp(a) + sp.exp(a) * (0 - a), a))}\"))\n\n\n\\(\\displaystyle \\text{1.}\\quad \\frac{d}{dx}\\left(- 3 x^{\\frac{2}{3}} + 5 x^{4} + \\frac{7}{x}\\right) = 20 x^{3} - \\frac{7}{x^{2}} - \\frac{2}{\\sqrt[3]{x}}\\)\n\n\n\\(\\displaystyle \\text{2.}\\quad \\frac{d}{dx}\\left(\\frac{x^{2} + 4 x + 3}{\\sqrt{x}}\\right) = \\frac{3 x^{2} + 4 x - 3}{2 x^{\\frac{3}{2}}}\\)\n\n\n\\(\\displaystyle \\text{3.}\\quad \\frac{d}{dx}\\left(3 e^{x} + \\frac{4}{\\sqrt[3]{x}}\\right) = 3 e^{x} - \\frac{4}{3 x^{\\frac{4}{3}}}\\)\n\n\n\\(\\displaystyle \\text{4.}\\quad \\text{tangent: } y = 2 x + 2, \\qquad \\text{normal: } y = 2 - \\frac{x}{2}\\)\n\n\n\\(\\displaystyle \\text{5.}\\quad x = \\left[ -1 - \\frac{\\sqrt{6}}{3}, \\  -1 + \\frac{\\sqrt{6}}{3}\\right]\\)\n\n\n\\(\\displaystyle \\text{6.}\\quad a = \\left[ 1\\right]\\)",
+    "crumbs": [
+      "Chapter 3: Differentiation Rules",
+      "3.1 Polynomials and Exponential Functions"
+    ]
+  },
+  {
+    "objectID": "derivatives_of_polynomials_and_exp_functions.html#summary",
+    "href": "derivatives_of_polynomials_and_exp_functions.html#summary",
+    "title": "Lecture Notes: Derivatives of Polynomials and Exponential Functions",
+    "section": "Summary",
+    "text": "Summary\n\n\n\nFunction\nDerivative\nRule\n\n\n\n\n\\(c\\)\n\\(0\\)\nConstant\n\n\n\\(x^n\\)\n\\(n x^{n-1}\\)\nPower (\\(n \\in \\mathbb{R}\\))\n\n\n\\(c\\,f\\)\n\\(c\\,f'\\)\nConstant Multiple\n\n\n\\(f \\pm g\\)\n\\(f' \\pm g'\\)\nSum / Difference\n\n\n\\(b^x\\)\n\\(f'(0)\\,b^x = b^x \\ln b\\)\nExponential\n\n\n\\(e^x\\)\n\\(e^x\\)\nNatural exponential\n\n\n\nKey ideas. - Rewrite roots and reciprocals as powers before you differentiate. - Polynomials are differentiated term by term. - \\(e\\) is defined so that \\(e^x\\) has slope \\(1\\) at \\(x = 0\\). That is what makes \\((e^x)' = e^x\\). - Tangent line at \\(x = a\\): \\(y = f(a) + f'(a)(x - a)\\). The normal line has slope \\(-1/f'(a)\\).\nNext: §3.2 The Product and Quotient Rules.",
+    "crumbs": [
+      "Chapter 3: Differentiation Rules",
+      "3.1 Polynomials and Exponential Functions"
+    ]
+  },
+  {
     "objectID": "derivatives_of_trigonometric_functions.html",
     "href": "derivatives_of_trigonometric_functions.html",
     "title": "Lecture Notes: Derivatives of Trigonometric Functions",
@@ -103,195 +398,10 @@
     "href": "derivatives_of_trigonometric_functions.html#summary",
     "title": "Lecture Notes: Derivatives of Trigonometric Functions",
     "section": "Summary",
-    "text": "Summary\n\n\n\n\\(f(x)\\)\n\\(f'(x)\\)\n\n\\(f(x)\\)\n\\(f'(x)\\)\n\n\n\n\n\\(\\sin x\\)\n\\(\\cos x\\)\n\n\\(\\csc x\\)\n\\(-\\csc x\\cot x\\)\n\n\n\\(\\cos x\\)\n\\(-\\sin x\\)\n\n\\(\\sec x\\)\n\\(\\sec x\\tan x\\)\n\n\n\\(\\tan x\\)\n\\(\\sec^2 x\\)\n\n\\(\\cot x\\)\n\\(-\\csc^2 x\\)\n\n\n\nTwo key limits (with \\(\\theta\\) in radians): \\[\\lim_{\\theta\\to0}\\frac{\\sin\\theta}{\\theta} = 1 \\qquad\\qquad \\lim_{\\theta\\to0}\\frac{\\cos\\theta - 1}{\\theta} = 0\\]\nKey ideas. - The derivative formulas hold only when angles are measured in radians. - \\(\\sin\\) and \\(\\cos\\) come from the limit definition and the addition formulas; the other four come from the Quotient Rule. - The “co-” functions have minus signs in their derivatives. - Derivatives of \\(\\sin x\\) and \\(\\cos x\\) repeat every four steps, so reduce \\(n\\) modulo \\(4\\) for high derivatives. - For limits like \\(\\dfrac{\\sin kx}{x}\\), rewrite them so the argument of \\(\\sin\\) matches the denominator.\nPrevious: §3.2 The Product and Quotient Rules.",
+    "text": "Summary\n\n\n\n\\(f(x)\\)\n\\(f'(x)\\)\n\n\\(f(x)\\)\n\\(f'(x)\\)\n\n\n\n\n\\(\\sin x\\)\n\\(\\cos x\\)\n\n\\(\\csc x\\)\n\\(-\\csc x\\cot x\\)\n\n\n\\(\\cos x\\)\n\\(-\\sin x\\)\n\n\\(\\sec x\\)\n\\(\\sec x\\tan x\\)\n\n\n\\(\\tan x\\)\n\\(\\sec^2 x\\)\n\n\\(\\cot x\\)\n\\(-\\csc^2 x\\)\n\n\n\nTwo key limits (with \\(\\theta\\) in radians): \\[\\lim_{\\theta\\to0}\\frac{\\sin\\theta}{\\theta} = 1 \\qquad\\qquad \\lim_{\\theta\\to0}\\frac{\\cos\\theta - 1}{\\theta} = 0\\]\nKey ideas. - The derivative formulas hold only when angles are measured in radians. - \\(\\sin\\) and \\(\\cos\\) come from the limit definition and the addition formulas; the other four come from the Quotient Rule. - The “co-” functions have minus signs in their derivatives. - Derivatives of \\(\\sin x\\) and \\(\\cos x\\) repeat every four steps, so reduce \\(n\\) modulo \\(4\\) for high derivatives. - For limits like \\(\\dfrac{\\sin kx}{x}\\), rewrite them so the argument of \\(\\sin\\) matches the denominator.\nPrevious: §3.2 The Product and Quotient Rules.\nNext: §3.4 The Chain Rule.",
     "crumbs": [
       "Chapter 3: Differentiation Rules",
       "3.3 Derivatives of Trigonometric Functions"
-    ]
-  },
-  {
-    "objectID": "derivatives_of_polynomials_and_exp_functions.html",
-    "href": "derivatives_of_polynomials_and_exp_functions.html",
-    "title": "Lecture Notes: Derivatives of Polynomials and Exponential Functions",
-    "section": "",
-    "text": "Stewart, Calculus, 9th ed., §3.1\nLearning objectives. By the end of this lecture you should be able to: 1. Differentiate constants, powers \\(x^n\\), and polynomials without using the limit definition. 2. Use the Constant Multiple, Sum, and Difference Rules. 3. Explain why \\(\\dfrac{d}{dx}(b^x) = f'(0)\\,b^x\\), and why the number \\(e\\) makes \\(\\dfrac{d}{dx}(e^x) = e^x\\). 4. Find tangent lines, normal lines, and horizontal tangents. 5. Check every answer symbolically with SymPy and numerically with NumPy.\nCode\nimport numpy as np\nimport sympy as sp\nimport matplotlib.pyplot as plt\nfrom IPython.display import Math, display\n\nsp.init_printing()\nx, t, h, n = sp.symbols(\"x t h n\")",
-    "crumbs": [
-      "Chapter 3: Differentiation Rules",
-      "3.1 Polynomials and Exponential Functions"
-    ]
-  },
-  {
-    "objectID": "derivatives_of_polynomials_and_exp_functions.html#why-we-need-rules",
-    "href": "derivatives_of_polynomials_and_exp_functions.html#why-we-need-rules",
-    "title": "Lecture Notes: Derivatives of Polynomials and Exponential Functions",
-    "section": "1. Why we need rules",
-    "text": "1. Why we need rules\nBy definition, \\[f'(x) = \\lim_{h\\to 0}\\frac{f(x+h) - f(x)}{h}.\\]\nComputing this limit every time is slow. In this lecture we use the definition once for each basic type of function. The results become rules we can apply right away.\nThe helper below compares a derivative found by hand with SymPy’s answer and displays the result.\n\n\nCode\ndef check(f, by_hand, var=x):\n    \"\"\"Display d/dvar f = by_hand and confirm it agrees with SymPy.\"\"\"\n    ok = sp.simplify(sp.diff(f, var) - by_hand) == 0\n    display(Math(rf\"\\frac{{d}}{{d{sp.latex(var)}}}\\left({sp.latex(f)}\\right) = {sp.latex(by_hand)}\"))\n    print(\"Agrees with SymPy:\", ok)\n\n\ndef diff_from_definition(f, var=x):\n    \"\"\"Compute f'(var) as the limit of the difference quotient.\"\"\"\n    return sp.limit((f.subs(var, var + h) - f) / h, h, 0)",
-    "crumbs": [
-      "Chapter 3: Differentiation Rules",
-      "3.1 Polynomials and Exponential Functions"
-    ]
-  },
-  {
-    "objectID": "derivatives_of_polynomials_and_exp_functions.html#constant-functions-and-the-power-rule",
-    "href": "derivatives_of_polynomials_and_exp_functions.html#constant-functions-and-the-power-rule",
-    "title": "Lecture Notes: Derivatives of Polynomials and Exponential Functions",
-    "section": "2. Constant functions and the Power Rule",
-    "text": "2. Constant functions and the Power Rule\n\nConstant functions\nThe graph of \\(f(x) = c\\) is a horizontal line, so its slope is \\(0\\) everywhere: \\[\\boxed{\\frac{d}{dx}(c) = 0}\\] From the definition: \\(\\dfrac{c - c}{h} = 0\\) for every \\(h \\neq 0\\), so the limit is \\(0\\).\n\n\nPowers with positive integer exponents\nLook at the first few cases, using the limit definition:\n\n\n\n\\(f(x)\\)\n\\(x\\)\n\\(x^2\\)\n\\(x^3\\)\n\\(x^4\\)\n\n\n\n\n\\(f'(x)\\)\n\\(1\\)\n\\(2x\\)\n\\(3x^2\\)\n\\(4x^3\\)\n\n\n\nThe pattern is clear:\nThe Power Rule. If \\(n\\) is a positive integer, then \\[\\boxed{\\frac{d}{dx}(x^n) = n\\,x^{n-1}}\\]\nProof. Use the binomial theorem to expand \\((x+h)^n\\): \\[\\frac{(x+h)^n - x^n}{h} = \\frac{\\left[x^n + n x^{n-1}h + \\binom{n}{2}x^{n-2}h^2 + \\cdots + h^n\\right] - x^n}{h}\n= n x^{n-1} + \\binom{n}{2}x^{n-2}h + \\cdots + h^{n-1}.\\] Every term after the first contains a factor of \\(h\\), so it goes to \\(0\\) as \\(h\\to 0\\). That leaves \\(n x^{n-1}\\). \\(\\blacksquare\\)\nThe table above, computed from the definition:\n\n\nCode\nfor k in range(1, 6):\n    display(Math(rf\"\\frac{{d}}{{dx}}\\left(x^{k}\\right) = {sp.latex(diff_from_definition(x**k))}\"))\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(x^1\\right) = 1\\)\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(x^2\\right) = 2 x\\)\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(x^3\\right) = 3 x^{2}\\)\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(x^4\\right) = 4 x^{3}\\)\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(x^5\\right) = 5 x^{4}\\)\n\n\n\n\nThe general Power Rule\nThe rule holds for every real number \\(n\\): \\[\\boxed{\\frac{d}{dx}(x^n) = n\\,x^{n-1}, \\qquad n \\in \\mathbb{R}}\\] (Stewart proves the general case later with logarithmic differentiation, in §3.6.)\nExample 1. - (a) \\(\\dfrac{d}{dx}\\left(\\dfrac{1}{x^2}\\right) = \\dfrac{d}{dx}\\left(x^{-2}\\right) = -2x^{-3} = -\\dfrac{2}{x^3}\\) - (b) \\(\\dfrac{d}{dx}\\left(\\sqrt[3]{x^2}\\right) = \\dfrac{d}{dx}\\left(x^{2/3}\\right) = \\tfrac{2}{3}x^{-1/3}\\) - (c) \\(\\dfrac{d}{dx}\\left(x^{\\pi}\\right) = \\pi x^{\\pi - 1}\\)\nTip: before you differentiate, rewrite roots and reciprocals as powers.\n\n\nCode\ncheck(1 / x**2, -2 / x**3)\ncheck(x**sp.Rational(2, 3), sp.Rational(2, 3) * x**sp.Rational(-1, 3))\ncheck(x**sp.pi, sp.pi * x**(sp.pi - 1))\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(\\frac{1}{x^{2}}\\right) = - \\frac{2}{x^{3}}\\)\n\n\nAgrees with SymPy: True\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(x^{\\frac{2}{3}}\\right) = \\frac{2}{3 \\sqrt[3]{x}}\\)\n\n\nAgrees with SymPy: True\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(x^{\\pi}\\right) = \\pi x^{-1 + \\pi}\\)\n\n\nAgrees with SymPy: True\n\n\nExample 2 (tangent and normal lines). Find the tangent line and the normal line to \\(y = x\\sqrt{x}\\) at the point \\((1, 1)\\).\nBy hand. \\(y = x^{3/2}\\), so \\(y' = \\tfrac{3}{2}x^{1/2}\\). At \\(x = 1\\) the slope is \\(m = \\tfrac32\\). - Tangent: \\(y - 1 = \\tfrac32(x - 1)\\), so \\(y = \\tfrac32 x - \\tfrac12\\). - The normal line is perpendicular to the tangent, so its slope is \\(-1/m = -\\tfrac23\\). Normal: \\(y - 1 = -\\tfrac23(x-1)\\), so \\(y = -\\tfrac23 x + \\tfrac53\\).\n\n\nCode\ny = x * sp.sqrt(x)\nm = sp.diff(y, x).subs(x, 1)\ntangent = sp.expand(1 + m * (x - 1))\nnormal = sp.expand(1 - (x - 1) / m)\ndisplay(Math(rf\"\\text{{tangent: }} y = {sp.latex(tangent)}, \\qquad \\text{{normal: }} y = {sp.latex(normal)}\"))\n\nxs = np.linspace(0, 2.5, 300)\nfig, ax = plt.subplots(figsize=(6, 5))\nax.plot(xs, xs**1.5, \"k\", lw=2, label=r\"$y = x\\sqrt{x}$\")\nax.plot(xs, 1.5 * xs - 0.5, lw=1.5, label=\"tangent\")\nax.plot(xs, -2 / 3 * xs + 5 / 3, lw=1.5, label=\"normal\")\nax.plot(1, 1, \"ko\")\nax.set_aspect(\"equal\")\nax.set_ylim(-0.5, 3)\nax.legend()\nax.set_title(r\"Tangent and normal lines at $(1,1)$\")\nplt.show()\n\n\n\\(\\displaystyle \\text{tangent: } y = \\frac{3 x}{2} - \\frac{1}{2}, \\qquad \\text{normal: } y = \\frac{5}{3} - \\frac{2 x}{3}\\)",
-    "crumbs": [
-      "Chapter 3: Differentiation Rules",
-      "3.1 Polynomials and Exponential Functions"
-    ]
-  },
-  {
-    "objectID": "derivatives_of_polynomials_and_exp_functions.html#new-derivatives-from-old",
-    "href": "derivatives_of_polynomials_and_exp_functions.html#new-derivatives-from-old",
-    "title": "Lecture Notes: Derivatives of Polynomials and Exponential Functions",
-    "section": "3. New derivatives from old",
-    "text": "3. New derivatives from old\nSuppose \\(c\\) is a constant and \\(f\\) and \\(g\\) are differentiable.\n\n\n\n\n\n\n\nRule\nFormula\n\n\n\n\nConstant Multiple\n\\(\\dfrac{d}{dx}\\big[c\\,f(x)\\big] = c\\,\\dfrac{d}{dx}f(x)\\)\n\n\nSum\n\\(\\dfrac{d}{dx}\\big[f(x) + g(x)\\big] = \\dfrac{d}{dx}f(x) + \\dfrac{d}{dx}g(x)\\)\n\n\nDifference\n\\(\\dfrac{d}{dx}\\big[f(x) - g(x)\\big] = \\dfrac{d}{dx}f(x) - \\dfrac{d}{dx}g(x)\\)\n\n\n\nProof of the Sum Rule. Let \\(F = f + g\\). Then \\[F'(x) = \\lim_{h\\to0}\\frac{[f(x+h)+g(x+h)] - [f(x)+g(x)]}{h}\n= \\lim_{h\\to0}\\frac{f(x+h)-f(x)}{h} + \\lim_{h\\to0}\\frac{g(x+h)-g(x)}{h} = f'(x) + g'(x).\\] The limit of a sum is the sum of the limits, and both limits exist because \\(f\\) and \\(g\\) are differentiable. \\(\\blacksquare\\)\nThe Sum Rule extends to any finite number of terms. Together with the Power Rule, this means we can differentiate any polynomial term by term.\nExample 3. \\[\\frac{d}{dx}\\left(x^8 + 12x^5 - 4x^4 + 10x^3 - 6x + 5\\right) = 8x^7 + 60x^4 - 16x^3 + 30x^2 - 6.\\]\n\n\nCode\np = x**8 + 12*x**5 - 4*x**4 + 10*x**3 - 6*x + 5\ncheck(p, 8*x**7 + 60*x**4 - 16*x**3 + 30*x**2 - 6)\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(x^{8} + 12 x^{5} - 4 x^{4} + 10 x^{3} - 6 x + 5\\right) = 8 x^{7} + 60 x^{4} - 16 x^{3} + 30 x^{2} - 6\\)\n\n\nAgrees with SymPy: True\n\n\nExample 4 (horizontal tangents). Find the points on \\(y = x^4 - 6x^2 + 4\\) where the tangent line is horizontal.\nBy hand. A horizontal tangent has slope \\(0\\): \\[y' = 4x^3 - 12x = 4x(x^2 - 3) = 0 \\quad\\Longrightarrow\\quad x = 0,\\ \\pm\\sqrt3.\\] The points are \\((0, 4)\\), \\((\\sqrt3, -5)\\), and \\((-\\sqrt3, -5)\\).\n\n\nCode\ny = x**4 - 6*x**2 + 4\ncrit = sp.solve(sp.diff(y, x), x)\npts = [(c, y.subs(x, c)) for c in crit]\ndisplay(Math(r\"\\text{Horizontal tangents at } \" + \", \".join(sp.latex(pt) for pt in pts)))\n\nxs = np.linspace(-2.6, 2.6, 400)\nf = sp.lambdify(x, y, \"numpy\")\nfig, ax = plt.subplots(figsize=(6, 5))\nax.plot(xs, f(xs), \"k\", lw=2, label=r\"$y = x^4 - 6x^2 + 4$\")\nfor cx, cy in pts:\n    cx, cy = float(cx), float(cy)\n    ax.plot([cx - 0.6, cx + 0.6], [cy, cy], lw=1.5)\n    ax.plot(cx, cy, \"ko\")\nax.set_ylim(-7, 8)\nax.legend()\nax.set_title(\"Horizontal tangent lines\")\nplt.show()\n\n\n\\(\\displaystyle \\text{Horizontal tangents at } \\left( 0, \\  4\\right), \\left( - \\sqrt{3}, \\  -5\\right), \\left( \\sqrt{3}, \\  -5\\right)\\)",
-    "crumbs": [
-      "Chapter 3: Differentiation Rules",
-      "3.1 Polynomials and Exponential Functions"
-    ]
-  },
-  {
-    "objectID": "derivatives_of_polynomials_and_exp_functions.html#exponential-functions",
-    "href": "derivatives_of_polynomials_and_exp_functions.html#exponential-functions",
-    "title": "Lecture Notes: Derivatives of Polynomials and Exponential Functions",
-    "section": "4. Exponential functions",
-    "text": "4. Exponential functions\nLet \\(f(x) = b^x\\) with \\(b &gt; 0\\). The definition gives \\[f'(x) = \\lim_{h\\to0}\\frac{b^{x+h} - b^x}{h} = \\lim_{h\\to0}\\frac{b^x\\,b^h - b^x}{h} = b^x \\lim_{h\\to0}\\frac{b^h - 1}{h}.\\] The remaining limit does not depend on \\(x\\). It is exactly \\(f'(0)\\), the slope of \\(y = b^x\\) at \\(x = 0\\). So \\[\\boxed{\\frac{d}{dx}\\left(b^x\\right) = f'(0)\\,b^x, \\qquad f'(0) = \\lim_{h\\to0}\\frac{b^h-1}{h}}\\]\nAn exponential function’s rate of change is proportional to the function itself. We still need the constant \\(f'(0)\\). Let’s estimate it numerically for \\(b = 2\\) and \\(b = 3\\):\n\n\nCode\nhs = np.array([0.1, 0.01, 0.001, 0.0001])\nprint(f\"{'h':&gt;8} {'(2^h-1)/h':&gt;12} {'(3^h-1)/h':&gt;12}\")\nfor hv in hs:\n    print(f\"{hv:&gt;8} {(2**hv - 1) / hv:&gt;12.6f} {(3**hv - 1) / hv:&gt;12.6f}\")\n\n\n       h    (2^h-1)/h    (3^h-1)/h\n     0.1     0.717735     1.161232\n    0.01     0.695555     1.104669\n   0.001     0.693387     1.099216\n  0.0001     0.693171     1.098673\n\n\nSo \\(f'(0) \\approx 0.69\\) when \\(b = 2\\), and \\(f'(0) \\approx 1.10\\) when \\(b = 3\\). Somewhere between \\(2\\) and \\(3\\) there is a base for which \\(f'(0) = 1\\) exactly.\nDefinition of \\(e\\). \\(e\\) is the number such that \\[\\boxed{\\lim_{h\\to0}\\frac{e^h - 1}{h} = 1}\\] Geometrically, \\(y = e^x\\) is the only exponential function whose tangent line at \\((0,1)\\) has slope exactly \\(1\\). Its value is \\(e \\approx 2.71828\\).\nDerivative of the natural exponential function. \\[\\boxed{\\frac{d}{dx}\\left(e^x\\right) = e^x}\\] \\(e^x\\) is its own derivative: at every point, the slope of the graph equals the height of the graph.\n(In §3.6 we’ll see that \\(f'(0) = \\ln b\\), so \\(\\dfrac{d}{dx}(b^x) = b^x \\ln b\\). Check: \\(\\ln 2 \\approx 0.693\\) and \\(\\ln 3 \\approx 1.099\\).)\n\n\nCode\nfor b in [2, 3, sp.E]:\n    lim = sp.limit((b**h - 1) / h, h, 0)\n    display(Math(rf\"b = {sp.latex(b)}: \\quad \\lim_{{h\\to0}}\\frac{{b^h - 1}}{{h}} = {sp.latex(lim)} \\approx {float(lim):.5f}\"))\n\ncheck(sp.exp(x), sp.exp(x))\n\n\n\\(\\displaystyle b = 2: \\quad \\lim_{h\\to0}\\frac{b^h - 1}{h} = \\log{\\left(2 \\right)} \\approx 0.69315\\)\n\n\n\\(\\displaystyle b = 3: \\quad \\lim_{h\\to0}\\frac{b^h - 1}{h} = \\log{\\left(3 \\right)} \\approx 1.09861\\)\n\n\n\\(\\displaystyle b = e: \\quad \\lim_{h\\to0}\\frac{b^h - 1}{h} = 1 \\approx 1.00000\\)\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(e^{x}\\right) = e^{x}\\)\n\n\nAgrees with SymPy: True\n\n\n\n\nCode\nxs = np.linspace(-1.5, 1.5, 300)\nfig, ax = plt.subplots(figsize=(6, 5))\nfor b, ls in [(2, \"--\"), (np.e, \"-\"), (3, \":\")]:\n    label = r\"$e^x$\" if b == np.e else rf\"${b}^x$\"\n    ax.plot(xs, b**xs, \"k\", ls=ls, lw=2, label=label)\nax.plot(xs, 1 + xs, lw=1.5, label=r\"slope-1 line $y = 1 + x$\")\nax.plot(0, 1, \"ko\")\nax.set_ylim(-0.5, 4)\nax.legend()\nax.set_title(r\"Only $e^x$ has slope $1$ at $(0,1)$\")\nplt.show()\n\n\n\n\n\n\n\n\n\nExample 5. If \\(f(x) = e^x - x\\), find \\(f'\\) and \\(f''\\).\nBy hand. \\(f'(x) = e^x - 1\\) and \\(f''(x) = e^x\\). Since \\(f''(x) &gt; 0\\) for all \\(x\\), \\(f'\\) is always increasing. (Note that \\(f'(0) = 0\\): the graph has a horizontal tangent at \\((0, 1)\\).)\n\n\nCode\nf = sp.exp(x) - x\ncheck(f, sp.exp(x) - 1)\ncheck(sp.diff(f, x), sp.exp(x))\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(- x + e^{x}\\right) = e^{x} - 1\\)\n\n\nAgrees with SymPy: True\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(e^{x} - 1\\right) = e^{x}\\)\n\n\nAgrees with SymPy: True\n\n\nExample 6. At what point on \\(y = e^x\\) is the tangent line parallel to \\(y = 2x\\)?\nBy hand. Parallel lines have equal slopes, so we need \\(y' = e^x = 2\\). That gives \\(x = \\ln 2\\), and \\(y = e^{\\ln 2} = 2\\). The point is \\((\\ln 2,\\ 2)\\).\n\n\nCode\nsol = sp.solve(sp.Eq(sp.diff(sp.exp(x), x), 2), x)\ndisplay(Math(rf\"x = {sp.latex(sol[0])}, \\quad y = {sp.latex(sp.exp(sol[0]))}\"))\n\n\n\\(\\displaystyle x = \\log{\\left(2 \\right)}, \\quad y = 2\\)",
-    "crumbs": [
-      "Chapter 3: Differentiation Rules",
-      "3.1 Polynomials and Exponential Functions"
-    ]
-  },
-  {
-    "objectID": "derivatives_of_polynomials_and_exp_functions.html#a-numerical-sanity-check",
-    "href": "derivatives_of_polynomials_and_exp_functions.html#a-numerical-sanity-check",
-    "title": "Lecture Notes: Derivatives of Polynomials and Exponential Functions",
-    "section": "5. A numerical sanity check",
-    "text": "5. A numerical sanity check\nSymbolic checks can hide algebra slips if we type the wrong function. As an independent check, we compare each by-hand derivative with a central difference \\(\\dfrac{f(x+h) - f(x-h)}{2h}\\) at many points.\n\n\nCode\ndef numeric_check(f, fprime, a=0.2, b=3.0, step=1e-5):\n    fn, dfn = sp.lambdify(x, f, \"numpy\"), sp.lambdify(x, fprime, \"numpy\")\n    xs = np.linspace(a, b, 200)\n    approx = (fn(xs + step) - fn(xs - step)) / (2 * step)\n    exact = dfn(xs)\n    return np.max(np.abs(approx - exact)) / np.max(np.abs(exact))\n\ntests = {\n    r\"x\\sqrt{x}\": (x * sp.sqrt(x), sp.Rational(3, 2) * sp.sqrt(x)),\n    r\"x^8 + 12x^5 - \\cdots\": (p, 8*x**7 + 60*x**4 - 16*x**3 + 30*x**2 - 6),\n    r\"x^4 - 6x^2 + 4\": (x**4 - 6*x**2 + 4, 4*x**3 - 12*x),\n    r\"e^x - x\": (sp.exp(x) - x, sp.exp(x) - 1),\n}\nfor name, (f, fp) in tests.items():\n    rel = numeric_check(f, fp)\n    display(Math(rf\"{name}: \\quad \\text{{relative error}} \\approx {rel:.1e}\"))\n\n\n\\(\\displaystyle x\\sqrt{x}: \\quad \\text{relative error} \\approx 2.7e-11\\)\n\n\n\\(\\displaystyle x^8 + 12x^5 - \\cdots: \\quad \\text{relative error} \\approx 7.4e-11\\)\n\n\n\\(\\displaystyle x^4 - 6x^2 + 4: \\quad \\text{relative error} \\approx 3.0e-11\\)\n\n\n\\(\\displaystyle e^x - x: \\quad \\text{relative error} \\approx 3.0e-11\\)",
-    "crumbs": [
-      "Chapter 3: Differentiation Rules",
-      "3.1 Polynomials and Exponential Functions"
-    ]
-  },
-  {
-    "objectID": "derivatives_of_polynomials_and_exp_functions.html#practice-problems",
-    "href": "derivatives_of_polynomials_and_exp_functions.html#practice-problems",
-    "title": "Lecture Notes: Derivatives of Polynomials and Exponential Functions",
-    "section": "6. Practice problems",
-    "text": "6. Practice problems\nTry these by hand first, then run the cell below to check.\n\n\\(f(x) = 5x^4 - 3x^{2/3} + \\dfrac{7}{x}\\)\n\\(y = \\dfrac{x^2 + 4x + 3}{\\sqrt x}\\) (simplify first)\n\\(y = 3e^x + \\dfrac{4}{\\sqrt[3]{x}}\\)\nFind the tangent and normal lines to \\(y = x^4 + 2e^x\\) at \\((0, 2)\\).\nFor what values of \\(x\\) does \\(f(x) = x^3 + 3x^2 + x + 3\\) have a horizontal tangent?\nFor what value of \\(a\\) does the tangent line to \\(y = e^x\\) at \\(x = a\\) pass through the origin?\n\n\n\nCode\nproblems = [\n    5*x**4 - 3*x**sp.Rational(2, 3) + 7/x,\n    (x**2 + 4*x + 3) / sp.sqrt(x),\n    3*sp.exp(x) + 4*x**sp.Rational(-1, 3),\n]\nfor i, f in enumerate(problems, 1):\n    df = sp.diff(f, x)\n    df = sp.factor(sp.simplify(df)) if i == 2 else df\n    display(Math(rf\"\\text{{{i}.}}\\quad \\frac{{d}}{{dx}}\\left({sp.latex(f)}\\right) = {sp.latex(df)}\"))\n\n# 4. tangent and normal lines at (0, 2)\ny = x**4 + 2*sp.exp(x)\nm = sp.diff(y, x).subs(x, 0)\ndisplay(Math(rf\"\\text{{4.}}\\quad \\text{{tangent: }} y = {sp.latex(2 + m*x)}, \\qquad \\text{{normal: }} y = {sp.latex(2 - x/m)}\"))\n\n# 5. horizontal tangents\nf = x**3 + 3*x**2 + x + 3\ndisplay(Math(rf\"\\text{{5.}}\\quad x = {sp.latex(sp.solve(sp.diff(f, x), x))}\"))\n\n# 6. tangent at x = a is y = e^a + e^a (x - a); set x = 0, y = 0\na = sp.symbols(\"a\")\ndisplay(Math(rf\"\\text{{6.}}\\quad a = {sp.latex(sp.solve(sp.exp(a) + sp.exp(a) * (0 - a), a))}\"))\n\n\n\\(\\displaystyle \\text{1.}\\quad \\frac{d}{dx}\\left(- 3 x^{\\frac{2}{3}} + 5 x^{4} + \\frac{7}{x}\\right) = 20 x^{3} - \\frac{7}{x^{2}} - \\frac{2}{\\sqrt[3]{x}}\\)\n\n\n\\(\\displaystyle \\text{2.}\\quad \\frac{d}{dx}\\left(\\frac{x^{2} + 4 x + 3}{\\sqrt{x}}\\right) = \\frac{3 x^{2} + 4 x - 3}{2 x^{\\frac{3}{2}}}\\)\n\n\n\\(\\displaystyle \\text{3.}\\quad \\frac{d}{dx}\\left(3 e^{x} + \\frac{4}{\\sqrt[3]{x}}\\right) = 3 e^{x} - \\frac{4}{3 x^{\\frac{4}{3}}}\\)\n\n\n\\(\\displaystyle \\text{4.}\\quad \\text{tangent: } y = 2 x + 2, \\qquad \\text{normal: } y = 2 - \\frac{x}{2}\\)\n\n\n\\(\\displaystyle \\text{5.}\\quad x = \\left[ -1 - \\frac{\\sqrt{6}}{3}, \\  -1 + \\frac{\\sqrt{6}}{3}\\right]\\)\n\n\n\\(\\displaystyle \\text{6.}\\quad a = \\left[ 1\\right]\\)",
-    "crumbs": [
-      "Chapter 3: Differentiation Rules",
-      "3.1 Polynomials and Exponential Functions"
-    ]
-  },
-  {
-    "objectID": "derivatives_of_polynomials_and_exp_functions.html#summary",
-    "href": "derivatives_of_polynomials_and_exp_functions.html#summary",
-    "title": "Lecture Notes: Derivatives of Polynomials and Exponential Functions",
-    "section": "Summary",
-    "text": "Summary\n\n\n\nFunction\nDerivative\nRule\n\n\n\n\n\\(c\\)\n\\(0\\)\nConstant\n\n\n\\(x^n\\)\n\\(n x^{n-1}\\)\nPower (\\(n \\in \\mathbb{R}\\))\n\n\n\\(c\\,f\\)\n\\(c\\,f'\\)\nConstant Multiple\n\n\n\\(f \\pm g\\)\n\\(f' \\pm g'\\)\nSum / Difference\n\n\n\\(b^x\\)\n\\(f'(0)\\,b^x = b^x \\ln b\\)\nExponential\n\n\n\\(e^x\\)\n\\(e^x\\)\nNatural exponential\n\n\n\nKey ideas. - Rewrite roots and reciprocals as powers before you differentiate. - Polynomials are differentiated term by term. - \\(e\\) is defined so that \\(e^x\\) has slope \\(1\\) at \\(x = 0\\). That is what makes \\((e^x)' = e^x\\). - Tangent line at \\(x = a\\): \\(y = f(a) + f'(a)(x - a)\\). The normal line has slope \\(-1/f'(a)\\).\nNext: §3.2 The Product and Quotient Rules.",
-    "crumbs": [
-      "Chapter 3: Differentiation Rules",
-      "3.1 Polynomials and Exponential Functions"
-    ]
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Calculus I",
-    "section": "",
-    "text": "Lecture notes and worked examples based on Stewart’s Calculus, 9th edition, with SymPy and NumPy.",
-    "crumbs": [
-      "Home"
-    ]
-  },
-  {
-    "objectID": "index.html#chapter-3-differentiation-rules",
-    "href": "index.html#chapter-3-differentiation-rules",
-    "title": "Calculus I",
-    "section": "Chapter 3: Differentiation Rules",
-    "text": "Chapter 3: Differentiation Rules\n\n3.1 Derivatives of Polynomials and Exponential Functions\n3.2 The Product and Quotient Rules\n3.3 Derivatives of Trigonometric Functions",
-    "crumbs": [
-      "Home"
-    ]
-  },
-  {
-    "objectID": "product_and_quotient_rules.html",
-    "href": "product_and_quotient_rules.html",
-    "title": "Lecture Notes: The Product and Quotient Rules",
-    "section": "",
-    "text": "Stewart, Calculus, 9th ed., §3.2\nLearning objectives. By the end of this lecture you should be able to: 1. Explain why \\((fg)' \\neq f'g'\\) and \\((f/g)' \\neq f'/g'\\). 2. Derive the Product Rule and the Quotient Rule from the limit definition. 3. Apply them to products and quotients of polynomials, powers, and exponentials. 4. Recognize when simplifying first is easier than using either rule. 5. Check every answer symbolically with SymPy and numerically with NumPy.\nCode\nimport numpy as np\nimport sympy as sp\nimport matplotlib.pyplot as plt\nfrom IPython.display import Math, display\n\nsp.init_printing()\nx, t = sp.symbols(\"x t\")",
-    "crumbs": [
-      "Chapter 3: Differentiation Rules",
-      "3.2 The Product and Quotient Rules"
-    ]
-  },
-  {
-    "objectID": "product_and_quotient_rules.html#where-we-are",
-    "href": "product_and_quotient_rules.html#where-we-are",
-    "title": "Lecture Notes: The Product and Quotient Rules",
-    "section": "1. Where we are",
-    "text": "1. Where we are\nFrom §3.1 we can differentiate sums and constant multiples:\n\n\n\nFunction\nDerivative\n\n\n\n\n\\(c\\)\n\\(0\\)\n\n\n\\(x^n\\)\n\\(n x^{n-1}\\)\n\n\n\\(c\\,f \\pm g\\)\n\\(c\\,f' \\pm g'\\)\n\n\n\\(e^x\\)\n\\(e^x\\)\n\n\n\nThis covers polynomials and exponentials. Products like \\(x e^x\\) and quotients like \\(\\dfrac{e^x}{1+x^2}\\) need two new rules.\nAs in §3.1, the helper below compares a derivative found by hand with SymPy’s answer.\n\n\nCode\ndef check(f, by_hand, var=x):\n    \"\"\"Display d/dvar f = by_hand and confirm it agrees with SymPy.\"\"\"\n    ok = sp.simplify(sp.diff(f, var) - by_hand) == 0\n    display(Math(rf\"\\frac{{d}}{{d{sp.latex(var)}}}\\left({sp.latex(f)}\\right) = {sp.latex(by_hand)}\"))\n    print(\"Agrees with SymPy:\", ok)",
-    "crumbs": [
-      "Chapter 3: Differentiation Rules",
-      "3.2 The Product and Quotient Rules"
-    ]
-  },
-  {
-    "objectID": "product_and_quotient_rules.html#the-product-rule",
-    "href": "product_and_quotient_rules.html#the-product-rule",
-    "title": "Lecture Notes: The Product and Quotient Rules",
-    "section": "2. The Product Rule",
-    "text": "2. The Product Rule\nWarning: the derivative of a product is not the product of the derivatives. For example, \\(f(x) = x\\) and \\(g(x) = x^2\\) give \\((fg)' = (x^3)' = 3x^2\\), but \\(f'g' = 1\\cdot 2x = 2x\\).\nThe Product Rule. If \\(f\\) and \\(g\\) are both differentiable, then \\[\\boxed{\\frac{d}{dx}\\big[f(x)\\,g(x)\\big] = f(x)\\,\\frac{d}{dx}\\big[g(x)\\big] + g(x)\\,\\frac{d}{dx}\\big[f(x)\\big]}\\] In prime notation: \\((fg)' = fg' + gf'\\). In words: the first times the derivative of the second, plus the second times the derivative of the first.\nProof. Subtract and add \\(f(x+h)\\,g(x)\\) in the numerator: \\[\\frac{f(x+h)g(x+h) - f(x)g(x)}{h}\n= f(x+h)\\,\\frac{g(x+h) - g(x)}{h} + g(x)\\,\\frac{f(x+h) - f(x)}{h}.\\] Let \\(h \\to 0\\). Since \\(f\\) is differentiable, it is continuous, so \\(f(x+h)\\to f(x)\\). The two difference quotients go to \\(g'(x)\\) and \\(f'(x)\\). \\(\\blacksquare\\)\nGeometric picture. Think of \\(u = f(x)\\) and \\(v = g(x)\\) as the sides of a rectangle with area \\(uv\\). When \\(x\\) changes, the change in area is \\(\\Delta(uv) = u\\,\\Delta v + v\\,\\Delta u + \\Delta u\\,\\Delta v\\). The last term is tiny compared with the others, and it disappears in the limit.\nWe check the rule for general functions \\(f\\) and \\(g\\):\n\n\nCode\nf, g = sp.Function(\"f\")(x), sp.Function(\"g\")(x)\nlhs = sp.diff(f * g, x)\nrhs = f * sp.diff(g, x) + g * sp.diff(f, x)\nprint(\"Product rule holds:\", sp.simplify(lhs - rhs) == 0)\n\n\nProduct rule holds: True\n\n\nExample 1. If \\(f(x) = x e^x\\), find \\(f'(x)\\) and \\(f^{(n)}(x)\\).\nBy hand. \\[f'(x) = x\\,(e^x)' + e^x\\,(x)' = xe^x + e^x = (x+1)e^x.\\] \\[f''(x) = (x+1)e^x + e^x\\cdot 1 = (x+2)e^x, \\qquad f^{\\prime\\prime\\prime}(x) = (x+3)e^x.\\] Each time we differentiate, the coefficient goes up by one, so \\(f^{(n)}(x) = (x+n)e^x\\).\n\n\nCode\nf = x * sp.exp(x)\ncheck(f, (x + 1) * sp.exp(x))\nfor k in range(1, 6):\n    print(f\"f^({k}) = (x+{k})e^x:\", sp.simplify(sp.diff(f, x, k) - (x + k) * sp.exp(x)) == 0)\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(x e^{x}\\right) = \\left(x + 1\\right) e^{x}\\)\n\n\nAgrees with SymPy: True\nf^(1) = (x+1)e^x: True\nf^(2) = (x+2)e^x: True\nf^(3) = (x+3)e^x: True\nf^(4) = (x+4)e^x: True\nf^(5) = (x+5)e^x: True\n\n\nExample 2. Differentiate \\(f(t) = \\sqrt{t}\\,(a + bt)\\), where \\(a\\) and \\(b\\) are constants.\nMethod 1 (Product Rule). \\[f'(t) = \\sqrt t\\cdot b + (a + bt)\\cdot\\frac{1}{2\\sqrt t} = \\frac{2bt + a + bt}{2\\sqrt t} = \\frac{a + 3bt}{2\\sqrt t}.\\]\nMethod 2 (expand first). \\(f(t) = a t^{1/2} + b t^{3/2}\\), so \\(f'(t) = \\tfrac12 a t^{-1/2} + \\tfrac32 b t^{1/2}\\). This is the same answer.\nLesson: sometimes simplifying first is faster than using the Product Rule.\n\n\nCode\na, b = sp.symbols(\"a b\")\ncheck(sp.sqrt(t) * (a + b*t), (a + 3*b*t) / (2 * sp.sqrt(t)), var=t)\n\n\n\\(\\displaystyle \\frac{d}{dt}\\left(\\sqrt{t} \\left(a + b t\\right)\\right) = \\frac{a + 3 b t}{2 \\sqrt{t}}\\)\n\n\nAgrees with SymPy: True\n\n\nExample 3. If \\(f(x) = \\sqrt{x}\\,g(x)\\), where \\(g(4) = 2\\) and \\(g'(4) = 3\\), find \\(f'(4)\\).\nBy hand. \\[f'(x) = \\sqrt x\\, g'(x) + g(x)\\cdot\\frac{1}{2\\sqrt x}\n\\quad\\Longrightarrow\\quad\nf'(4) = 2\\cdot 3 + 2\\cdot\\frac14 = 6.5.\\]\n\n\nCode\n# f'(4) depends only on g(4) and g'(4), so any g with those values works,\n# e.g. the line g(x) = 2 + 3(x - 4).\ng = 2 + 3 * (x - 4)\nprint(\"f'(4) =\", sp.diff(sp.sqrt(x) * g, x).subs(x, 4))\n\n\nf'(4) = 13/2",
-    "crumbs": [
-      "Chapter 3: Differentiation Rules",
-      "3.2 The Product and Quotient Rules"
-    ]
-  },
-  {
-    "objectID": "product_and_quotient_rules.html#the-quotient-rule",
-    "href": "product_and_quotient_rules.html#the-quotient-rule",
-    "title": "Lecture Notes: The Product and Quotient Rules",
-    "section": "3. The Quotient Rule",
-    "text": "3. The Quotient Rule\nThe Quotient Rule. If \\(f\\) and \\(g\\) are differentiable and \\(g(x) \\neq 0\\), then \\[\\boxed{\\frac{d}{dx}\\left[\\frac{f(x)}{g(x)}\\right] = \\frac{g(x)\\,\\dfrac{d}{dx}\\big[f(x)\\big] - f(x)\\,\\dfrac{d}{dx}\\big[g(x)\\big]}{\\big[g(x)\\big]^2}}\\] In prime notation: \\(\\left(\\dfrac{f}{g}\\right)' = \\dfrac{gf' - fg'}{g^2}\\). A common way to remember it: “low d-high minus high d-low, over the square of what’s below.”\nThe order matters because of the minus sign. The numerator starts with the denominator \\(g\\).\nProof. Let \\(Q = f/g\\). Then \\[\\frac{Q(x+h) - Q(x)}{h} = \\frac{f(x+h)g(x) - f(x)g(x+h)}{h\\,g(x+h)\\,g(x)}.\\] Subtract and add \\(f(x)g(x)\\) in the numerator: \\[= \\frac{g(x)\\,\\dfrac{f(x+h)-f(x)}{h} - f(x)\\,\\dfrac{g(x+h)-g(x)}{h}}{g(x+h)\\,g(x)}\n\\;\\xrightarrow{h\\to0}\\; \\frac{g(x)f'(x) - f(x)g'(x)}{g(x)^2},\\] since \\(g\\) is continuous, so \\(g(x+h) \\to g(x)\\). \\(\\blacksquare\\)\n\n\nCode\nf, g = sp.Function(\"f\")(x), sp.Function(\"g\")(x)\nlhs = sp.diff(f / g, x)\nrhs = (g * sp.diff(f, x) - f * sp.diff(g, x)) / g**2\nprint(\"Quotient rule holds:\", sp.simplify(lhs - rhs) == 0)\n\n\nQuotient rule holds: True\n\n\nExample 4. Let \\(y = \\dfrac{x^2 + x - 2}{x^3 + 6}\\). Find \\(y'\\).\nBy hand. \\[y' = \\frac{(x^3+6)(2x+1) - (x^2+x-2)(3x^2)}{(x^3+6)^2}\n= \\frac{(2x^4 + x^3 + 12x + 6) - (3x^4 + 3x^3 - 6x^2)}{(x^3+6)^2}\n= \\frac{-x^4 - 2x^3 + 6x^2 + 12x + 6}{(x^3+6)^2}.\\]\n\n\nCode\ny = (x**2 + x - 2) / (x**3 + 6)\ncheck(y, (-x**4 - 2*x**3 + 6*x**2 + 12*x + 6) / (x**3 + 6)**2)\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(\\frac{x^{2} + x - 2}{x^{3} + 6}\\right) = \\frac{- x^{4} - 2 x^{3} + 6 x^{2} + 12 x + 6}{\\left(x^{3} + 6\\right)^{2}}\\)\n\n\nAgrees with SymPy: True\n\n\nExample 5. Find an equation of the tangent line to \\(y = \\dfrac{e^x}{1 + x^2}\\) at the point \\(\\left(1, \\tfrac{e}{2}\\right)\\).\nBy hand. \\[y' = \\frac{(1+x^2)e^x - e^x(2x)}{(1+x^2)^2} = \\frac{e^x(1-x)^2}{(1+x^2)^2}.\\] At \\(x = 1\\), \\(y' = 0\\). The tangent line is horizontal: \\(y = \\dfrac{e}{2}\\).\nAlso notice that \\(y' \\ge 0\\) everywhere, so the function is always increasing. It has a horizontal tangent only at \\(x = 1\\).\n\n\nCode\ny = sp.exp(x) / (1 + x**2)\ncheck(y, sp.exp(x) * (1 - x)**2 / (1 + x**2)**2)\nprint(\"slope at x = 1:\", sp.diff(y, x).subs(x, 1))\n\nxs = np.linspace(-1.5, 2.5, 300)\nfig, ax = plt.subplots(figsize=(6, 5))\nax.plot(xs, np.exp(xs) / (1 + xs**2), \"k\", lw=2, label=r\"$y = e^x/(1+x^2)$\")\nax.axhline(np.e / 2, lw=1.5, label=r\"tangent $y = e/2$\")\nax.plot(1, np.e / 2, \"ko\")\nax.legend()\nax.set_title(r\"Horizontal tangent at $(1, e/2)$\")\nplt.show()\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(\\frac{e^{x}}{x^{2} + 1}\\right) = \\frac{\\left(1 - x\\right)^{2} e^{x}}{\\left(x^{2} + 1\\right)^{2}}\\)\n\n\nAgrees with SymPy: True\nslope at x = 1: 0\n\n\n\n\n\n\n\n\n\nTip: don’t use the Quotient Rule every time you see a quotient. For example, \\[F(x) = \\frac{3x^2 + 2\\sqrt x}{x} = 3x + 2x^{-1/2}\n\\quad\\Longrightarrow\\quad F'(x) = 3 - x^{-3/2}.\\] Simplifying first is much faster than using the Quotient Rule here.\n\n\nCode\ncheck((3*x**2 + 2*sp.sqrt(x)) / x, 3 - x**sp.Rational(-3, 2))\n\n\n\\(\\displaystyle \\frac{d}{dx}\\left(\\frac{2 \\sqrt{x} + 3 x^{2}}{x}\\right) = 3 - \\frac{1}{x^{\\frac{3}{2}}}\\)\n\n\nAgrees with SymPy: True",
-    "crumbs": [
-      "Chapter 3: Differentiation Rules",
-      "3.2 The Product and Quotient Rules"
-    ]
-  },
-  {
-    "objectID": "product_and_quotient_rules.html#a-numerical-sanity-check",
-    "href": "product_and_quotient_rules.html#a-numerical-sanity-check",
-    "title": "Lecture Notes: The Product and Quotient Rules",
-    "section": "4. A numerical sanity check",
-    "text": "4. A numerical sanity check\nSymbolic checks can hide algebra slips if we type the wrong function. As an independent check, we compare each by-hand derivative with a central difference \\(\\dfrac{f(x+h) - f(x-h)}{2h}\\) at many points.\n\n\nCode\ndef numeric_check(f, fprime, a=0.2, b=3.0, step=1e-5):\n    fn, dfn = sp.lambdify(x, f, \"numpy\"), sp.lambdify(x, fprime, \"numpy\")\n    xs = np.linspace(a, b, 200)\n    approx = (fn(xs + step) - fn(xs - step)) / (2 * step)\n    exact = dfn(xs)\n    return np.max(np.abs(approx - exact)) / np.max(np.abs(exact))\n\ntests = {\n    r\"x e^x\": (x * sp.exp(x), (x + 1) * sp.exp(x)),\n    r\"\\frac{x^2+x-2}{x^3+6}\": ((x**2 + x - 2) / (x**3 + 6),\n                               (-x**4 - 2*x**3 + 6*x**2 + 12*x + 6) / (x**3 + 6)**2),\n    r\"\\frac{e^x}{1+x^2}\": (sp.exp(x) / (1 + x**2), sp.exp(x) * (1 - x)**2 / (1 + x**2)**2),\n    r\"\\frac{3x^2 + 2\\sqrt{x}}{x}\": ((3*x**2 + 2*sp.sqrt(x)) / x, 3 - x**sp.Rational(-3, 2)),\n}\nfor name, (f, fp) in tests.items():\n    rel = numeric_check(f, fp)\n    display(Math(rf\"{name}: \\quad \\text{{relative error}} \\approx {rel:.1e}\"))\n\n\n\\(\\displaystyle x e^x: \\quad \\text{relative error} \\approx 3.7e-11\\)\n\n\n\\(\\displaystyle \\frac{x^2+x-2}{x^3+6}: \\quad \\text{relative error} \\approx 4.9e-11\\)\n\n\n\\(\\displaystyle \\frac{e^x}{1+x^2}: \\quad \\text{relative error} \\approx 7.8e-11\\)\n\n\n\\(\\displaystyle \\frac{3x^2 + 2\\sqrt{x}}{x}: \\quad \\text{relative error} \\approx 2.1e-09\\)",
-    "crumbs": [
-      "Chapter 3: Differentiation Rules",
-      "3.2 The Product and Quotient Rules"
-    ]
-  },
-  {
-    "objectID": "product_and_quotient_rules.html#practice-problems",
-    "href": "product_and_quotient_rules.html#practice-problems",
-    "title": "Lecture Notes: The Product and Quotient Rules",
-    "section": "5. Practice problems",
-    "text": "5. Practice problems\nTry these by hand first, then run the cell below to check.\n\n\\(g(x) = (x^3 - 2x)\\,e^x\\)\n\\(y = (x^2 + 1)(x^3 - x)\\) (do it two ways: Product Rule, then expand first)\n\\(h(t) = \\dfrac{e^t}{t^2 + 1}\\)\n\\(y = \\dfrac{1 - xe^x}{x + e^x}\\)\nFind the tangent line to \\(y = \\dfrac{2x}{x+1}\\) at \\((1, 1)\\).\nIf \\(f(2) = 10\\), \\(f'(2) = -2\\), \\(g(2) = 3\\), and \\(g'(2) = 4\\), find \\((fg)'(2)\\) and \\((f/g)'(2)\\).\n\n\n\nCode\nproblems = [\n    (x**3 - 2*x) * sp.exp(x),\n    (x**2 + 1) * (x**3 - x),\n    sp.exp(t) / (t**2 + 1),\n    (1 - x*sp.exp(x)) / (x + sp.exp(x)),\n]\nfor i, f in enumerate(problems, 1):\n    var = t if f.has(t) else x\n    df = sp.diff(f, var)\n    df = sp.expand(df) if i == 2 else sp.factor(sp.simplify(df))\n    display(Math(rf\"\\text{{{i}.}}\\quad \\frac{{d}}{{d{var}}}\\left({sp.latex(f)}\\right) = {sp.latex(df)}\"))\n\n# 5. tangent line\ny = 2*x / (x + 1)\nm = sp.diff(y, x).subs(x, 1)\ndisplay(Math(rf\"\\text{{5.}}\\quad y = {sp.latex(sp.expand(1 + m*(x - 1)))}\"))\n\n# 6. product and quotient rules at a point\nf2, df2, g2, dg2 = 10, -2, 3, 4\ndisplay(Math(rf\"\\text{{6.}}\\quad (fg)'(2) = {f2*dg2 + g2*df2}, \\qquad (f/g)'(2) = {sp.latex(sp.Rational(g2*df2 - f2*dg2, g2**2))}\"))\n\n\n\\(\\displaystyle \\text{1.}\\quad \\frac{d}{dx}\\left(\\left(x^{3} - 2 x\\right) e^{x}\\right) = \\left(x - 1\\right) \\left(x^{2} + 4 x + 2\\right) e^{x}\\)\n\n\n\\(\\displaystyle \\text{2.}\\quad \\frac{d}{dx}\\left(\\left(x^{2} + 1\\right) \\left(x^{3} - x\\right)\\right) = 5 x^{4} - 1\\)\n\n\n\\(\\displaystyle \\text{3.}\\quad \\frac{d}{dt}\\left(\\frac{e^{t}}{t^{2} + 1}\\right) = \\frac{\\left(t - 1\\right)^{2} e^{t}}{\\left(t^{2} + 1\\right)^{2}}\\)\n\n\n\\(\\displaystyle \\text{4.}\\quad \\frac{d}{dx}\\left(\\frac{- x e^{x} + 1}{x + e^{x}}\\right) = - \\frac{x^{2} e^{x} + e^{2 x} + e^{x} + 1}{\\left(x + e^{x}\\right)^{2}}\\)\n\n\n\\(\\displaystyle \\text{5.}\\quad y = \\frac{x}{2} + \\frac{1}{2}\\)\n\n\n\\(\\displaystyle \\text{6.}\\quad (fg)'(2) = 34, \\qquad (f/g)'(2) = - \\frac{46}{9}\\)",
-    "crumbs": [
-      "Chapter 3: Differentiation Rules",
-      "3.2 The Product and Quotient Rules"
-    ]
-  },
-  {
-    "objectID": "product_and_quotient_rules.html#summary",
-    "href": "product_and_quotient_rules.html#summary",
-    "title": "Lecture Notes: The Product and Quotient Rules",
-    "section": "Summary",
-    "text": "Summary\n\n\n\nFunction\nDerivative\nRule\n\n\n\n\n\\(f\\,g\\)\n\\(f g' + g f'\\)\nProduct\n\n\n\\(\\dfrac{f}{g}\\)\n\\(\\dfrac{g f' - f g'}{g^2}\\)\nQuotient\n\n\n\nTable of differentiation formulas so far (§3.1–3.2): \\[\\frac{d}{dx}(c) = 0 \\qquad \\frac{d}{dx}(x^n) = nx^{n-1} \\qquad \\frac{d}{dx}(e^x) = e^x\\] \\[(cf)' = cf' \\qquad (f \\pm g)' = f' \\pm g' \\qquad (fg)' = fg' + gf' \\qquad \\left(\\frac{f}{g}\\right)' = \\frac{gf' - fg'}{g^2}\\]\nKey ideas. - \\((fg)' \\neq f'g'\\) and \\((f/g)' \\neq f'/g'\\). - In the Quotient Rule the order matters: the numerator starts with the denominator \\(g\\). - Before using the Product or Quotient Rule, check whether simplifying first is easier.\nPrevious: §3.1 Derivatives of Polynomials and Exponential Functions.\nNext: §3.3 Derivatives of Trigonometric Functions.",
-    "crumbs": [
-      "Chapter 3: Differentiation Rules",
-      "3.2 The Product and Quotient Rules"
     ]
   }
 ]
