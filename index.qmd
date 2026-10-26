@@ -9,3 +9,4 @@ Lecture notes and worked examples based on Stewart's *Calculus*, 9th edition, wi
 - [3.1 Derivatives of Polynomials and Exponential Functions](derivatives_of_polynomials_and_exp_functions.ipynb)
 - [3.2 The Product and Quotient Rules](product_and_quotient_rules.ipynb)
 - [3.3 Derivatives of Trigonometric Functions](derivatives_of_trigonometric_functions.ipynb)
+- [3.4 The Chain Rule](chain_rule.ipynb)
