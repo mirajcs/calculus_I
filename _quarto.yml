@@ -7,6 +7,7 @@ project:
     - product_and_quotient_rules.ipynb
     - derivatives_of_trigonometric_functions.ipynb
     - chain_rule.ipynb
+    - implicit_differentiation.ipynb
 
 website:
   title: "Calculus I"
@@ -22,6 +23,8 @@ website:
             text: "3.3 Derivatives of Trigonometric Functions"
           - href: chain_rule.ipynb
             text: "3.4 The Chain Rule"
+          - href: implicit_differentiation.ipynb
+            text: "3.5 Implicit Differentiation"
   sidebar:
     style: docked
     contents:
@@ -37,6 +40,8 @@ website:
             text: "3.3 Derivatives of Trigonometric Functions"
           - href: chain_rule.ipynb
             text: "3.4 The Chain Rule"
+          - href: implicit_differentiation.ipynb
+            text: "3.5 Implicit Differentiation"
 
 format:
   html:
